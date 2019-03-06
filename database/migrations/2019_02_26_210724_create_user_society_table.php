@@ -18,6 +18,7 @@ class CreateUserSocietyTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('society_id')->unsigned();
             $table->boolean('status')->default(true);
+            $table->dateTime('joined')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->reference('id')->on('users')->onDelete('cascade');

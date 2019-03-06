@@ -55,14 +55,11 @@ class UserService
     public function changeUserRole($currentRole, $user, $society, $newRole)
     {
         //get current user role
-        $currentRole = Role::where('id', $currentRole)->where('society_id', $society);
+        $currentRole = Role::where('id', $currentRole)->where('society_id', $society)->first();
+        if($currentRole == null) throw new \Exception("Role not found for this society");
         //get new role
-        $newRole = Role::where('id', $newRole)->where('society_id', $society);
-        //check current role
-        if ($currentRole == null || $newRole == null)
-        {
-            return new \Exception("Role not found");
-        }
+        $newRole = Role::where('id', $newRole)->where('society_id', $society)->first();
+        if($newRole == null) throw new \Exception("Role not found for this society");
         //dettach role
         $user->roles()->detach($currentRole);
         //attach new role
@@ -110,5 +107,44 @@ class UserService
         $commitee->members()->attach($data['members']);
         //return
         return $commitee;
+    }
+
+    /**
+     * Get Member total meeting attendance
+     * @param Society $society
+     * @param User $user
+     * @param string $meetingType
+     * 
+     * @return int $attendanceCount
+     */
+    public function getMemberAttendanceCount($society, $user, $meetingType = null)
+    {
+        //get society
+        $society = Society::find($society);
+        //hold attendance count
+        $attendanceCount = 0;
+        //get society attendances
+        $attendances = $society->attendances()->where('user_id', $user->id)->get();
+        //check for meeting
+        if ($meeting == null)
+        {
+            //loop through attendances
+            foreach($attendances as $attendance)
+            {
+                //count attendance
+                $attendanceCount++;
+            }
+            return $attendanceCount;
+        }
+        //check for meeting type
+        foreach($attendances as $attendance)
+        {
+            if ($attendance->meeting->type == $meetingType)
+            {
+                //count attendance
+                $attendanceCount++;
+            }
+        }
+        return $attendanceCount;
     }
 }

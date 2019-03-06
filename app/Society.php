@@ -3,7 +3,13 @@
 namespace App;
 
 use App\Role;
+use App\Task;
 use App\User;
+use App\Matter;
+use App\Report;
+use App\Meeting;
+use App\Commitee;
+use App\Attendance;
 use Illuminate\Database\Eloquent\Model;
 
 class Society extends Model
@@ -21,5 +27,40 @@ class Society extends Model
     public function users()
     {
         return $this->belongsToMany(User::class, 'user_society');
+    }
+
+    //define committees
+    public function commitees()
+    {
+        return $this->hasMany(Commitee::class);
+    }
+
+    //define meetings
+    public function meetings()
+    {
+        return $this->hasMany(Meeting::class);
+    }
+
+    //define reports
+    public function reports()
+    {
+        return $this->hasMany(Report::class);
+    }
+    //define matters
+    public function matters()
+    {
+        return $this->hasMany(Matter::class);
+    }
+
+    //define tasks
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+
+    //define attendance
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
     }
 }

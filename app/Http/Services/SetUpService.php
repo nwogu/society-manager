@@ -5,7 +5,7 @@
 namespace App\Http\Services;
 
 use App\Role;
-use Constants;
+use App\Constants;
 use App\Society;
 
 class SetUpService
@@ -112,6 +112,8 @@ class SetUpService
             //check if society was created
             if($society instanceof Society)
             {
+                //initialize session data
+                session(["society", $society->id]);
                 //add user to society
                 return $this->addUserToSociety($user, $society, $data['role']);
             }
@@ -180,6 +182,26 @@ class SetUpService
 
         //return false
         return false;
+    }
+
+    /**
+     * Get society roles
+     * @param Society $society
+     * 
+     * @return Role $roles
+     */
+    public function getSocietyRoles($society)
+    {
+        //get roles
+        $roles = SOciety::find($society)->roles;
+        //check roles
+        if ($roles->isEmpty())
+        {
+            //seed default roles
+            $roles = $this->seedDefaultSocietalRoles($society)->roles;
+        }
+
+        return $roles;
     }
 
 }

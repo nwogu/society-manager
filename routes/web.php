@@ -13,8 +13,11 @@
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name("front");
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::group(['middleware' => 'app_auth', 'namespace' => 'App\Http\Controllers'], function()
+{
+    Route::get('/home', 'HomeController@index')->name('home');
+});

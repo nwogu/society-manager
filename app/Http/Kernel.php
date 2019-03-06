@@ -41,6 +41,10 @@ class Kernel extends HttpKernel
             'throttle:60,1',
             'bindings',
         ],
+        'app_auth' => [
+            'auth',
+            'society'
+        ]
     ];
 
     /**
@@ -59,5 +63,6 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'society' => \App\Http\Middleware\VerifySociety::class,
     ];
 }
