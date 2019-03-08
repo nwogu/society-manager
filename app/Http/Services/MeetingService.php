@@ -28,14 +28,14 @@ class MeetingService
     {
         //check attendance
         if ($data['attendance'] == null)
-        {
-            //return exception
-            return new \Exception("Meeting should have at least one member in attendance");
-        }
+        return new \Exception("Meeting should have at least one member in attendance");
         //get society
         $society = Society::find($society);
         //add society to meeting
         $data['society_id'] = $society->id;
+        //vaidate presider
+        $data['presider'] = $society->users()->where('id', $data['presider'])->first() ?? null;
+        if ($data['presider'] == null) throw new \Exception("Presider does not belong to this society");
         //create meeting
         $meeting = (new Meeting)->create($data);
         //add attendance
@@ -212,13 +212,13 @@ class MeetingService
         //parse report owner
         switch($data['reporter_type'])
         {
-            case "commitee":
+            case Constants::REPORTER_COMMITEE_TYPE:
                 $commitee = $cociety->commitees()->where('commitee_id', $data['reporter_id'])->first();
                 if($commitee == null) throw new \Exception("Commitee not found for this society");
                 return $commitee->reports()->create([
                     $data
                 ]);
-            case "member":
+            case Constants::REPORTER_MEMBER_TYPE:
                 $member = $society->users()->where('user_id', $data['reporter_id'])->first();
                 if($member == null) throw new \Exception("Member not found for this society");
                 return $member->reports()->create([
@@ -414,19 +414,19 @@ class MeetingService
         //parse report owner
         switch($data['reporter_type'])
         {
-            case "commitee":
+            case Constants::REPORTER_COMMITEE_TYPE:
                 $commitee = $cociety->commitees()->where('commitee_id', $data['reporter_id'])->first();
                 if($commitee == null) throw new \Exception("Commitee not found for this society");
-                $report->reportable = $commitee;
+                $report->reportable()->create($commitee);
                 break;
-            case "member":
+            case Constants::REPORTER_MEMBER_TYPE:
                 $member = $society->users()->where('user_id', $data['reporter_id'])->first();
                 if($member == null) throw new \Exception("Member not found for this society");
-                $report->reportable = $member;
+                $report->reportable()->create($member);
         }
         $report->meeting_id = $data['meeting_id'] ?? null;
-        $report->save();
         $report->report = $data['report'];
+        $report->save();
         return $report;
     }
 
@@ -494,8 +494,64 @@ class MeetingService
         //update meeting
         $meeting->update($data);
         //sync attendance
-        if ($attendances !== false) $meeting->attendances()->sync($attendances);
+        $attendances === false ?:$meeting->attendances()->sync($attendances);
         //return meeting
         return $meeting;
+    }
+
+    /**
+     * Delete Meeting
+     * @param Society $society
+     * @param Meeting $meeting
+     * 
+     * @return bool
+     */
+    public function deleteMeeting(Society $society, Meeting $meeting)
+    {
+        $meeting = $society->meetings()->where('id', $meeting->id)->first();
+        if ($meeting == null) throw new \Exception("Meting not found for this society");
+        return $meeting->delete();
+    }
+
+    /**
+     * Delete Report
+     * @param Society $society
+     * @param Report $report
+     * 
+     * @return bool
+     */
+    public function deleteReport(Society $society, Report $report)
+    {
+        $report = $society->reports()->where('id', $report->id)->first();
+        if ($report == null) throw new \Exception("Report not found for this society");
+        return $report->delete();
+    }
+
+    /**
+     * Delete Task
+     * @param Society $society
+     * @param Task $task
+     * 
+     * @return bool
+     */
+    public function deleteTask(Society $society, Task $task)
+    {
+        $task = $society->tasks()->where('id', $task->id)->first();
+        if ($task == null) throw new \Exception("Task not found for this society");
+        return $task->delete();
+    }
+
+    /**
+     * Delete Matter
+     * @param Society $society
+     * @param Matter $matter
+     * 
+     * @return bool
+     */
+    public function deleteMatter(Society $society, Matter $matter)
+    {
+        $matter = $society->matters()->where('id', $matter->id)->first();
+        if ($matter == null) throw new \Exception("Matter not found for this society");
+        return $matter->delete();
     }
 }

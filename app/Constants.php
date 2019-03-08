@@ -22,6 +22,10 @@
 
      const MEETING_TYPE_COMMITEE = "commitee meeting";
 
+     const REPORTER_COMMITEE_TYPE = "commitee";
+
+     const REPORTER_MEMBER_TYPE = "member";
+
      const MEETING_TYPES = [
         self::MEETING_TYPE_GENERAL, 
         self::MEETING_TYPE_EXECUTIVE, 
@@ -32,5 +36,10 @@
         self::MATTERS_ARISING,
         self::MATTERS_TREATING,
         self::MATTERS_RESOLVED
+    ];
+
+    const REPORTER_TYPES = [
+        self::REPORTER_COMMITEE_TYPE,
+        self::REPORTER_MEMBER_TYPE
     ];
  }

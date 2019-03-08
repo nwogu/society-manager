@@ -19,6 +19,7 @@ class CreateMattersTable extends Migration
             $table->integer('society_id')->unsigned();
             $table->integer('raised_by')->unsigned()->nullable();
             $table->text('matter');
+            $table->text('details')->nullable();
             $table->integer('meeting_id')->unsigned()->nullable();
             $table->string('status')->default(Constants::MATTERS_ARISING);
             $table->timestamps();

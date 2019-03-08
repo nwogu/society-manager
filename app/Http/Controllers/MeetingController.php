@@ -137,7 +137,7 @@ class MeetingController extends Controller
     public function editReport(Report $report, ReportRequest $request)
     {
         //Edit Report
-        $report = $this->meetingService->editReport($this->society, $report, $request->all());
+        $report = $this->meetingService->editReport($this->society, $report, $request->validated());
     }
 
     /**
@@ -147,7 +147,7 @@ class MeetingController extends Controller
     public function editTask(Task $task, TaskRequest $request)
     {
         //Edit Task
-        $task = $this->meetingService->editTask($this->society, $task, $request->all());
+        $task = $this->meetingService->editTask($this->society, $task, $request->validated());
     }
 
     /**
@@ -157,7 +157,7 @@ class MeetingController extends Controller
     public function editMatter(Matter $matter, MatterRequest $request)
     {
         //Edit Matter
-        $matter = $this->meetingService->editMatter($this->society, $matter, $request->all());
+        $matter = $this->meetingService->editMatter($this->society, $matter, $request->validated());
     }
 
     /**
@@ -167,7 +167,7 @@ class MeetingController extends Controller
     public function createMeeting(MeetingRequest $request)
     {
         //Create Meeting
-        $mmeting = $this->meetingService->createMeeting($request->all(), $this->society);
+        $mmeting = $this->meetingService->createMeeting($request->validated(), $this->society);
 
     }
 
@@ -178,7 +178,7 @@ class MeetingController extends Controller
     public function createTask(TaskRequest $request)
     {
         //Create Task
-        $task = $this->meetingService->createTask($this->society, $request->all());
+        $task = $this->meetingService->createTask($this->society, $request->validated());
     }
 
     /**
@@ -188,7 +188,7 @@ class MeetingController extends Controller
     public function createMatter(MatterRequest $request)
     {
         //Create Matter
-        $matter = $this->meetingService->createMatter($this->society, $request->all());
+        $matter = $this->meetingService->createMatter($this->society, $request->validated());
     }
 
     /**
@@ -198,7 +198,7 @@ class MeetingController extends Controller
     public function createReport(ReportRequest $request)
     {
         //Create Report
-        $report = $this->meetingService->createReport($this->society, $request->all());
+        $report = $this->meetingService->createReport($this->society, $request->validated());
     }
 
     /**
@@ -208,6 +208,46 @@ class MeetingController extends Controller
     public function editMeeting(Meeting $meeting, MeetingRequest $request)
     {
         //Edit Meeting
-        $meeting = $this->meetingService->editMeeting($this->society, $meeting, $request->all());
+        $meeting = $this->meetingService->editMeeting($this->society, $meeting, $request->validated());
+    }
+
+    /**
+     * Delete Meeting
+     * @return Response
+     */
+    public function deleteMeeting(Meeting $meeting)
+    {
+        //Delete Meeting
+        $this->meetingService->deleteMeeting($this->society, $meeting);
+    }
+
+    /**
+     * Delete Report
+     * @return Response
+     */
+    public function deleteReport(Report $report)
+    {
+        //Delete Report
+        $this->meetingService->deleteReport($this->society, $report);
+    }
+
+    /**
+     * Delete Task
+     * @return Response
+     */
+    public function deleteTask(Task $task)
+    {
+        //Delete Task
+        $this->meetingService->deleteTask($this->society, $task);
+    }
+
+    /**
+     * Delete Matter
+     * @return Response
+     */
+    public function deleteMatter(Matter $matter)
+    {
+        //Delete Matter
+        $this->meetingService->deleteMatter($this->society, $matter);
     }
 }
