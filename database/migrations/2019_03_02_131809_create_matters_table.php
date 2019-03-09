@@ -26,7 +26,7 @@ class CreateMattersTable extends Migration
 
             $table->foreign('society_id')->references('id')->on('societies')->onDelete('cascade');
             $table->foreign('raised_by')->references('id')->on('users')->onDelete('set null');
-            $table->foreign('meeting_id')->references('id')->on('meeting')->onDelete('set null');
+            $table->foreign('meeting_id')->references('id')->on('meetings')->onDelete('set null');
         });
     }
 

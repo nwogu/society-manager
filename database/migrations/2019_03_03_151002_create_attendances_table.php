@@ -17,7 +17,7 @@ class CreateAttendancesTable extends Migration
             $table->increments('id');
             $table->integer('society_id')->unsigned();
             $table->integer('meeting_id')->unsigned();
-            $table->integer('user_id')->unsiged();
+            $table->integer('user_id')->unsigned();
             $table->timestamps();
 
             $table->foreign('society_id')->references('id')->on('societies')->onDelete('cascade');

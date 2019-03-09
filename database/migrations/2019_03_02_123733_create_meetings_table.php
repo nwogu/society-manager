@@ -21,7 +21,7 @@ class CreateMeetingsTable extends Migration
             $table->text('minute');
             $table->dateTime('start_time');
             $table->dateTime('end_time');
-            $table->integer('presider')->unsigned()->nulable();
+            $table->integer('presider')->unsigned()->nullable();
             $table->integer('total_attendance')->nullable();
             $table->timestamps();
 

@@ -21,8 +21,8 @@ class CreateUserSocietyTable extends Migration
             $table->dateTime('joined')->nullable();
             $table->timestamps();
 
-            $table->foreign('user_id')->reference('id')->on('users')->onDelete('cascade');
-            $table->foreign('society_id')->reference('id')->on('societies')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('society_id')->references('id')->on('societies')->onDelete('cascade');
         });
     }
 

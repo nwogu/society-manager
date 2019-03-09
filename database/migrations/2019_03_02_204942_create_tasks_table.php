@@ -23,7 +23,7 @@ class CreateTasksTable extends Migration
             $table->timestamps();
 
             $table->foreign('society_id')->references('id')->on('societies')->onDelete('cascade');
-            $able->foreign('assigned_to')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('assigned_to')->references('id')->on('users')->onDelete('set null');
             $table->foreign('meeting_id')->references('id')->on('meetings')->onDelete('set null');
         });
     }
