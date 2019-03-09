@@ -15,7 +15,7 @@ class MeetingService
     /**
      * Hold Limit
      */
-    protected $limit = 10;
+    protected $limit = Constants::DEFAULT_LIMIT;
 
     /**
      * Create Meeting

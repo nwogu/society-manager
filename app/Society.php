@@ -26,7 +26,8 @@ class Society extends Model
     //define users
     public function users()
     {
-        return $this->belongsToMany(User::class, 'user_society');
+        return $this->belongsToMany(User::class, 'user_society')
+        ->withPivot('status', 'joined');
     }
 
     //define committees

@@ -44,6 +44,25 @@ Route::group(['middleware' => 'app_auth', 'namespace' => 'App\Http\Controllers']
     Route::delete('/delete-task/{task}', 'MeetingController@deleteTask')->name('delete-task');
     Route::delete('/delete-report/{report}', 'MeetingController@deleteReport')->name('delete-report');
     Route::delete('/delete-meeting/{meeting}', 'MeetingController@deleteMeeting')->name('delete-meeting');
-    
+
+    //Member Controller Routes
+    Route::get('/members', 'MemberController@getAllMembers')->name('members');
+    Route::get('/executives', 'MemberController@getExecutives')->name('executives');
+    Route::get('/commitees', 'MemberController@getCommitees')->name('commitees');
+    Route::get('/floor-members', 'MemberController@getFloorMembers')->name('floor-members');
+    Route::get('/roles', 'MemberController@getSocietyRoles')->name('roles');
+    Route::post('/members', 'MemberController@addNewMember')->name('add-member');
+    Route::post('/roles', 'MemberController@createRole')->name('add-roles');
+    Route::post('/commitees', 'MemberController@createCommitee')->name('add-commitee');
+    Route::put('/commitees/{commitee}', 'MemberController@editCommitee')->name('edit-commitee');
+    Route::put('/members/{member}', 'MemberController@editMember')->name('edit-member');
+    Route::put('/roles/{role}', 'MemberController@editRole')->name('edit-role');
+    Route::delete('/members/{member}', 'MemberController@removeMember')->name('remove-member');
+    Route::delete('/commitees/{commitee}', 'MemberController@removeCommitee')->name('remove-commitee');
+    Route::delete('/roles/{role}', 'MemberController@removeRole')->name('remove-role');
+    Route::get('/commitees/{commitee}', 'MemberController@getSingleCommitee')->name('single-commitee');
+    Route::get('/members/{member}', 'MemberController@getSingleMember')->name('single-member');
+    // Route::get('/roles/{role}', 'MemberController@getSingleRole')->name('single-role');
+
 
 });

@@ -43,10 +43,8 @@ class SetUpService
      */
     public function createUser(array $data): User
     {
-        //hold default password
-        $defaultPassword = "12345";
         //set password
-        $data['password'] = $data['password'] ?? $defaultPassword;
+        $data['password'] = $data['password'] ?? Constants::DEFAULT_PASSWORD;
         //hash password
         $data['password'] = Hash::make($data['password']);
         //construct full name
@@ -193,7 +191,7 @@ class SetUpService
     public function getSocietyRoles($society)
     {
         //get roles
-        $roles = SOciety::find($society)->roles;
+        $roles = Society::find($society)->roles;
         //check roles
         if ($roles->isEmpty())
         {

@@ -6,6 +6,8 @@
 namespace App\Http\Services;
 
 use App\User;
+use App\Society;
+use App\Constants;
 use App\Http\Services\SetUpService;
 
 class UserService
@@ -15,6 +17,11 @@ class UserService
      * SetUp Service
      */
     protected $setUpService;
+
+    /**
+     * Limit
+     */
+    protected $limit = Constants::DEFAULT_LIMIT;
 
     public function __construct(SetUpService $setUpService)
     {
@@ -146,5 +153,202 @@ class UserService
             }
         }
         return $attendanceCount;
+    }
+
+    /**
+     * Get all Members
+     * @param Society $society
+     * 
+     * @return Collection
+     */
+    public function getAllMembers(Society $society)
+    {
+        //Get Members
+        return $society->users()->paginate($this->limit);
+    }
+
+    /**
+     * Get Executives of society by role
+     * @param Society $society
+     * 
+     * @return Collection
+     */
+    public function getExecutives(Society $society)
+    {
+        //Get Executives
+        return User::query()
+        ->leftJoin('user_role', 'user_role.user_id', '=', 'users.id')
+        ->leftJoin('roles', 'roles.id', '=', 'user_role.role_id')
+        ->where('society_id', $society->id)
+        ->where('executive', true)
+        ->paginate($this->limit);
+    }
+
+    /**
+     * Get Society Commitees
+     * @param Society $society
+     * 
+     * @return Collection
+     */
+    public function getCommitees(Society $society)
+    {
+        //Get Commitees
+        return $society->commitees()->paginate($this->limit);
+    }
+
+    /**
+     * Get floor members of a society
+     * @param Society $society
+     * 
+     * @return Collection
+     */
+    public function getFloorMembers()
+    {
+        //Get Floor Members
+        return User::query()
+        ->leftJoin('user_role', 'user_role.user_id', '=', 'users.id')
+        ->leftJoin('roles', 'roles.id', '=', 'user_role.role_id')
+        ->where('society_id', $society->id)
+        ->where('executive', false)
+        ->paginate($this->limit);
+    }
+
+    /**
+     * Get Society Roles
+     * @param Society $society
+     * 
+     * @return Collection
+     */
+    public function getSocietyRoles(Society $society)
+    {
+        return $this->setUpService->getSocietyRoles($society);
+    }
+
+    /**
+     * Edit Commitee
+     * @param Society $society
+     * @param array $data
+     * @param Commitee $commitee
+     * 
+     * @return Commitee $commitee
+     */
+    public function editCommitee(Society $society, $data, Commmitee $commitee)
+    {
+        //Get Commitee
+        $commitee = $society->commitees()->where('id', $commitee->id)->first();
+        if($commitee == null) throw new \Exception("Commitee not found for this society");
+        $commitee->name = $data['name'] ?? $commitee->name;
+        $commitee->save();
+        if(isset($data['members'])) $commitee->members()->sync($data['members']);
+        return $commitee;
+
+    }
+
+    /**
+     * Edit Member
+     * @param Society $society
+     * @param array $data
+     * @param User $member
+     * 
+     * @return $member
+     */
+    public function editMember(Society $society, $data, User $user)
+    {
+        //Get Member
+        $member = $society->users()->where('id', $user->id)->first();
+        //Get Member
+        if($member == null) throw new \Exception("Member not found for this society");
+        //Check for role change
+        if (isset($data['role']) && $data['role'] != null) 
+        {
+            //Get current user role
+            $currentRole = $member->roles()->where('society_id', $society->id)-first();
+            $member = $this->changeUserRole($currentRole->id, $member, $society, $data['role']);
+        }
+        //hash password
+        $data['password'] = !empty($data['password']) ? Hash::make($data['password']) : $member->password;
+        return $member->update($data);
+    }
+
+    /**
+     * Edit Role
+     * @param Society $society
+     * @param array $data
+     * @param Role $role
+     * 
+     * @return Role $role
+     */
+    public function editRole(Society $society, $array, Role $role)
+    {
+        //Get Role
+        $role = $society->roles()->where('id', $role->id)->first();
+        if ($role == null) throw new \Exception("Role not found for this society");
+        return $role->update($data);
+    }
+
+    /**
+     * Remove User From Society
+     * @param Society $society
+     * @param User $member
+     */
+    public function removeMember(Society $society, User $member)
+    {
+        return $society->users()->dettach($member);
+    }
+
+    /**
+     * Remove Role
+     * @param Society $society
+     * @param Role $role
+     */
+    public function removeRole(Society $society, Role $role)
+    {
+        //get role
+        $role = $society->roles()->where('id', $role->id)->first();
+        if ($role == null) throw new \Exception("Role not found for this society");
+        return $role->delete();
+    }
+
+    /**
+     * Remove Commitee
+     * @param Society $society
+     * @param Commitee $commitee
+     */
+    public function removeCommitee(Society $society, Commitee $commitee)
+    {
+        //Get Commitee
+        $commitee = $society->commitees()->where('id', $commitee->id)->first();
+        if ($commitee == null) throw new \Exception("Commitee not found for this society");
+        return $commitee->delete();
+    }
+
+    /**
+     * Get Single Member
+     * @param Society $society
+     * @param User $member
+     * 
+     * @return User $member
+     */
+    public function getSingleMember(Society $society, User $member)
+    {
+        //Get member
+        $member = $society->users()->where('id', $member->id)->first();
+        if ($member == null)  throw new \Exception("Member not found in this society");
+        return $member;
+    }
+
+    /**
+     * Get Single Commitee
+     * @param Society $society
+     * @param Commitee $commitee
+     * 
+     * @return Commitee $commitee
+     */
+    public function getSingleCommitee(Society $society, Commitee $commitee)
+    {
+        //Get Commitee
+        $commitee = $society->commitees()->where('id', $commitee->id)->first();
+        if ($commitee == null)  throw new \Exception("Commitee not found in this society");
+        return $commitee;
     }
 }

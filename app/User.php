@@ -6,6 +6,7 @@ use App\Role;
 use App\Task;
 use App\Matter;
 use App\Report;
+use App\Society;
 use App\Commitee;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -62,5 +63,12 @@ class User extends Authenticatable
     public function tasks()
     {
         return $this->hasMany(Task::class, 'assigned_to');
+    }
+
+    //define society
+    public function societies()
+    {
+        return $this->belongsToMany(Society::class, 'user_society')
+        ->withPivot('status', 'joined');
     }
 }

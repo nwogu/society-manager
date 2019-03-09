@@ -42,4 +42,8 @@
         self::REPORTER_COMMITEE_TYPE,
         self::REPORTER_MEMBER_TYPE
     ];
+
+    const DEFAULT_LIMIT = 10;
+
+    const DEFAULT_PASSWORD = "123456";
  }
