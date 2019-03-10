@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 class Society extends Model
 {
     //hold fillable/guarded
-    protected $guarded = [];
+    protected $fillable = ['name', 'description', 'domain', 'logo'];
 
     //define roles
     public function roles()

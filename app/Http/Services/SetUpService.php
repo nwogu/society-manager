@@ -5,8 +5,10 @@
 namespace App\Http\Services;
 
 use App\Role;
-use App\Constants;
+use App\User;
 use App\Society;
+use App\Constants;
+use Illuminate\Support\Facades\Hash;
 
 class SetUpService
 {
@@ -21,18 +23,11 @@ class SetUpService
         //parse data
         $data['domain'] = isset($data['domain']) ? str_replace(' ', '', trim(strtolower($data['domain']))) : null;
         $data['name'] = ucwords($data['name']);
-        //try create society
-        try
-        {
-            //create society
-            $society = Society::create($data);
-            //create societal roles
-            return $this->seedDefaultSocietalRoles($society);
-        }
-        catch(\Exception $e)
-        {
-            return $e->message();
-        }
+        //create society
+        $society = Society::create($data);
+        //create societal roles
+        return $this->seedDefaultSocietalRoles($society);
+        
     }
 
     /**
@@ -62,7 +57,7 @@ class SetUpService
     public function seedDefaultSocietalRoles(Society $society): Society
     {
         //check if society has roles
-        if ($society->roles()->isEmpty())
+        if ($society->roles()->get()->isEmpty())
         {
             //define default roles
             $defaultRoles = array(
@@ -113,7 +108,11 @@ class SetUpService
                 //initialize session data
                 session(["society", $society->id]);
                 //add user to society
-                return $this->addUserToSociety($user, $society, $data['role']);
+                $this->addUserToSociety($user, $society, $data['role']);
+                //login user
+                auth()->login($user);
+                //return user
+                return $user;
             }
         }
 
@@ -131,7 +130,7 @@ class SetUpService
      * 
      * @return User $user
      */
-    public function addUserToSociety(User $user, Society $society, $role = null)
+    public function addUserToSociety(User $user, Society $society, $role = Constants::DEFAULT_ROLE)
     {
         //seed default roles
         $society = $this->seedDefaultSocietalRoles($society);
@@ -139,16 +138,16 @@ class SetUpService
         if($society->users()->where('user_id', $user->id)->exists())
         {
             //return exception
-            return new \Exception($user->firstname . " already belongs to this society");
+            throw new \Exception($user->firstname . " already belongs to this society");
         }
         //get role
-        $role = $society->roles()->where('role_id', $role)->first() ?? $society->roles()->where('role', Constants::DEFAULT_ROLE)->first();
+        $role = $society->roles()->where('id', $role)->orWhere('role', $role)->first();
         //attach user role
         $user->roles()->attach($role);
         //attach user society
         $society->users()->attach($user);
         //return user
-        return $user;
+        return User::find($user);
     }
 
     /**

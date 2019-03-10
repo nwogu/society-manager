@@ -27,7 +27,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '';
 
     /**
      * Setup Service
@@ -44,6 +44,7 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
         //inject setup service
         $this->setUpService = $setUpService;
+        $this->redirectTo = route('home');
     }
 
     /**
@@ -88,7 +89,7 @@ class LoginController extends Controller
 
         return array(
             "email" => $request->email,
-            "pasword" => $request->password
+            "password" => $request->password
         );
     }
 }
