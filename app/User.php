@@ -8,6 +8,7 @@ use App\Matter;
 use App\Report;
 use App\Society;
 use App\Commitee;
+use App\Collection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -70,5 +71,17 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Society::class, 'user_society')
         ->withPivot('status', 'joined');
+    }
+
+    //define collection
+    public function reportedCollections()
+    {
+        return $this->hasMany(Collection::class, 'recorder');
+    }
+
+    //define collection
+    public function paidCollections()
+    {
+        return $this->hasMany(Collection::class, 'member');
     }
 }

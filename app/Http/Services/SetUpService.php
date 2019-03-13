@@ -160,15 +160,15 @@ class SetUpService
     public function resolveDomain($request, $user)
     {
         //parse request
-        $domain = $request->has('domain') ? $request->domain : $request->name;
+        $domain = $request->has('domain') ? $request->domain : $request->society;
         //get society
-        $society = Society::where('name', $domain)
+        $society = Society::where('id', $domain)
         ->orWhere('domain', $domain)->first();
         //check society
         if ($society !== null)
         {
             //check if user belongs to the society
-            if ($society->users()->where('user_id', $user->id)->exits())
+            if ($society->users()->where('user_id', $user->id)->exists())
             {
                 //initialize session data
                 $request->session()->put('society', $society->id);

@@ -8,6 +8,7 @@ use App\Matter;
 use App\Report;
 use App\Society;
 use App\Attendance;
+use App\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class Meeting extends Model
@@ -51,5 +52,11 @@ class Meeting extends Model
     public function presider()
     {
         return $this->belongsTo(User::class, 'presider');
+    }
+
+    //define collection
+    public function collections()
+    {
+        return $this->hasMany(Collection::class);
     }
 }

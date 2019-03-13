@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Report;
+use App\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class Commitee extends Model
@@ -22,5 +23,11 @@ class Commitee extends Model
     public function reports()
     {
         return $this->morphMany(Report::class, 'reportable');
+    }
+
+    //define collection
+    public function collections()
+    {
+        return $this->hasMany(Collection::class);
     }
 }

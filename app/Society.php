@@ -10,6 +10,7 @@ use App\Report;
 use App\Meeting;
 use App\Commitee;
 use App\Attendance;
+use App\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class Society extends Model
@@ -63,5 +64,11 @@ class Society extends Model
     public function attendances()
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    //define collection
+    public function collections()
+    {
+        return $this->hasMany(Collection::class);
     }
 }

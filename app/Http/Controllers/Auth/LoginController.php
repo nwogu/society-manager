@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Society;
 use Illuminate\Http\Request;
 use App\Http\Services\SetUpService;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
@@ -54,7 +56,7 @@ class LoginController extends Controller
      *
      * @return Response
      */
-    public function authenticate(Request $request)
+    public function authenticated(Request $request)
     {
         //parse credentials
         $credentials = $this->credentials($request);
@@ -62,9 +64,9 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             // Resolve Domain
             if ($this->setUpService->resolveDomain($request, Auth::user()))
-            {
+            { 
                 //redirect to dash board
-                return redirect()->intended('dashboard');
+                return redirect()->intended('home');
             }
 
             //log out
@@ -91,5 +93,17 @@ class LoginController extends Controller
             "email" => $request->email,
             "password" => $request->password
         );
+    }
+
+    /**
+     * Show the application's login form.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function showLoginForm()
+    {
+        //Get All Societies
+        $societies = Society::all();
+        return view('auth.login', \compact('societies'));
     }
 }
