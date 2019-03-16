@@ -26,6 +26,14 @@
 
      const REPORTER_MEMBER_TYPE = "member";
 
+     const COLLECTION_DUE_TYPE = "due";
+
+     const COLLECTION_LEVY_TYPE = "levy";
+
+     const COLLECTION_DONATION_TYPE = "donation";
+
+     const COLLECTION_EXPENSE_TYPE = "expense";
+
      const MEETING_TYPES = [
         self::MEETING_TYPE_GENERAL, 
         self::MEETING_TYPE_EXECUTIVE, 
@@ -41,6 +49,13 @@
     const REPORTER_TYPES = [
         self::REPORTER_COMMITEE_TYPE,
         self::REPORTER_MEMBER_TYPE
+    ];
+
+    const COLLECTION_TYPES = [
+        self::COLLECTION_DUE_TYPE,
+        self::COLLECTION_LEVY_TYPE,
+        self::COLLECTION_DONATION_TYPE,
+        self::COLLECTION_EXPENSE_TYPE
     ];
 
     const DEFAULT_LIMIT = 10;

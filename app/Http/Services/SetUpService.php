@@ -201,4 +201,28 @@ class SetUpService
         return $roles;
     }
 
+    /**
+     * Load Dashboad Header Cards
+     * @param Society $society
+     * 
+     * @return array
+     */
+    public static function loadGeneralData($society)
+    {
+        //Get Society
+        $society = Society::find($society);
+        //set Society Name
+        $data['name'] = $society->name;
+        //Get Total Members
+        $data['members'] = $society->users()->count() ?? 0;
+        //Get Total Collections
+        $data['collections'] = $society->collections()->sum('received') ?? 0;
+        //Get Pending Tasks
+        $data['tasks'] = $society->tasks()->where('status', false)->get()->count() ?? 0;
+        //Get Pending Matters Arisng
+        $data['matters'] = $society->matters()->where('status', Constants::MATTERS_ARISING)->get()->count() ?? 0;
+
+        return $data;
+    }
+
 }

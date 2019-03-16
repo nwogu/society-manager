@@ -21,48 +21,63 @@ Route::group(['middleware' => 'app_auth'], function()
 {
     Route::get('/home', 'HomeController@index')->name('home');
 
-    //Meeting Controller Routes
-    Route::get('/get-meetings', 'MeetingController@getMeetings')->name('get-meetings');
-    Route::get('/get-meeting-details', 'MeetingController@getMeetingDetails')->name('get-meeting-details');
-    Route::get('/get-society-reports', 'MeetingController@getSocietyReports')->name('get-society-reports');
-    Route::get('/get-society-matters', 'MeetingController@getSocietyMatters')->name('get-society-matters');
-    Route::get('/get-society-tasks', 'MeetingController@getSocietyTasks')->name('get-society-tasks');
-    Route::get('/get-single-report', 'MeetingController@getSingleReport')->name('get-single-report');
-    Route::get('/get-single-matter', 'MeetingController@getSingleMatter')->name('get-single-matter');
-    Route::get('/get-single-task', 'MeetingController@getSingleTask')->name('get-single-task');
-    Route::get('/toggle-task-status/{task}', 'MeetingController@toggleTaskStatus')->name('toggle-task-status');
-    Route::get('/toggle-matter-status/{matter}', 'MeetingController@toggleMatterStatus')->name('toggle-matter-status');
-    Route::put('/edit-report/{report}', 'MeetingController@editReport')->name('edit-report');
-    Route::put('/edit-task/{task}', 'MeetingController@editTask')->name('edit-task');
-    Route::put('/edit-matter/{matter}', 'MeetingController@editMatter')->name('edit-matter');
-    Route::put('/edit-meeting/{meeting}', 'MeetingController@editMeeting')->name('edit-meeting');
-    Route::post('/create-report', 'MeetingController@createReport')->name('create-report');
-    Route::post('/create-task', 'MeetingController@createTask')->name('create-task');
-    Route::post('/create-matter', 'MeetingController@createMatter')->name('create-matter');
-    Route::post('/create-meeting', 'MeetingController@createMeeting')->name('create-meeting');
-    Route::delete('/delete-matter/{matter}', 'MeetingController@deleteMatter')->name('delete-matter');
-    Route::delete('/delete-task/{task}', 'MeetingController@deleteTask')->name('delete-task');
-    Route::delete('/delete-report/{report}', 'MeetingController@deleteReport')->name('delete-report');
-    Route::delete('/delete-meeting/{meeting}', 'MeetingController@deleteMeeting')->name('delete-meeting');
+    Route::group(['prefix' => 'meeting'], function(){
+        //Meeting Controller Routes
+        Route::get('/get-meetings', 'MeetingController@getMeetings')->name('get-meetings');
+        Route::get('/get-meeting-details', 'MeetingController@getMeetingDetails')->name('get-meeting-details');
+        Route::get('/get-society-reports', 'MeetingController@getSocietyReports')->name('get-society-reports');
+        Route::get('/get-society-matters', 'MeetingController@getSocietyMatters')->name('get-society-matters');
+        Route::get('/get-society-tasks', 'MeetingController@getSocietyTasks')->name('get-society-tasks');
+        Route::get('/get-single-report', 'MeetingController@getSingleReport')->name('get-single-report');
+        Route::get('/get-single-matter', 'MeetingController@getSingleMatter')->name('get-single-matter');
+        Route::get('/get-single-task', 'MeetingController@getSingleTask')->name('get-single-task');
+        Route::get('/toggle-task-status/{task}', 'MeetingController@toggleTaskStatus')->name('toggle-task-status');
+        Route::get('/toggle-matter-status/{matter}', 'MeetingController@toggleMatterStatus')->name('toggle-matter-status');
+        Route::put('/edit-report/{report}', 'MeetingController@editReport')->name('edit-report');
+        Route::put('/edit-task/{task}', 'MeetingController@editTask')->name('edit-task');
+        Route::put('/edit-matter/{matter}', 'MeetingController@editMatter')->name('edit-matter');
+        Route::put('/edit-meeting/{meeting}', 'MeetingController@editMeeting')->name('edit-meeting');
+        Route::post('/create-report', 'MeetingController@createReport')->name('create-report');
+        Route::post('/create-task', 'MeetingController@createTask')->name('create-task');
+        Route::post('/create-matter', 'MeetingController@createMatter')->name('create-matter');
+        Route::post('/create-meeting', 'MeetingController@createMeeting')->name('create-meeting');
+        Route::delete('/delete-matter/{matter}', 'MeetingController@deleteMatter')->name('delete-matter');
+        Route::delete('/delete-task/{task}', 'MeetingController@deleteTask')->name('delete-task');
+        Route::delete('/delete-report/{report}', 'MeetingController@deleteReport')->name('delete-report');
+        Route::delete('/delete-meeting/{meeting}', 'MeetingController@deleteMeeting')->name('delete-meeting');
+    });
 
-    //Member Controller Routes
-    Route::get('/members', 'MemberController@getAllMembers')->name('members');
-    Route::get('/executives', 'MemberController@getExecutives')->name('executives');
-    Route::get('/commitees', 'MemberController@getCommitees')->name('commitees');
-    Route::get('/floor-members', 'MemberController@getFloorMembers')->name('floor-members');
-    Route::get('/roles', 'MemberController@getSocietyRoles')->name('roles');
-    Route::post('/members', 'MemberController@addNewMember')->name('add-member');
-    Route::post('/roles', 'MemberController@createRole')->name('add-roles');
-    Route::post('/commitees', 'MemberController@createCommitee')->name('add-commitee');
-    Route::put('/commitees/{commitee}', 'MemberController@editCommitee')->name('edit-commitee');
-    Route::put('/members/{member}', 'MemberController@editMember')->name('edit-member');
-    Route::put('/roles/{role}', 'MemberController@editRole')->name('edit-role');
-    Route::delete('/members/{member}', 'MemberController@removeMember')->name('remove-member');
-    Route::delete('/commitees/{commitee}', 'MemberController@removeCommitee')->name('remove-commitee');
-    Route::delete('/roles/{role}', 'MemberController@removeRole')->name('remove-role');
-    Route::get('/commitees/{commitee}', 'MemberController@getSingleCommitee')->name('single-commitee');
-    Route::get('/members/{member}', 'MemberController@getSingleMember')->name('single-member');
-    // Route::get('/roles/{role}', 'MemberController@getSingleRole')->name('single-role');
+    Route::group(['prefix' => 'member'], function(){
+        //Member Controller Routes
+        Route::get('/members', 'MemberController@getAllMembers')->name('members');
+        Route::get('/executives', 'MemberController@getExecutives')->name('executives');
+        Route::get('/commitees', 'MemberController@getCommitees')->name('commitees');
+        Route::get('/floor-members', 'MemberController@getFloorMembers')->name('floor-members');
+        Route::get('/roles', 'MemberController@getSocietyRoles')->name('roles');
+        Route::post('/members', 'MemberController@addNewMember')->name('add-member');
+        Route::post('/roles', 'MemberController@createRole')->name('add-roles');
+        Route::post('/commitees', 'MemberController@createCommitee')->name('add-commitee');
+        Route::put('/commitees/{commitee}', 'MemberController@editCommitee')->name('edit-commitee');
+        Route::put('/members/{member}', 'MemberController@editMember')->name('edit-member');
+        Route::put('/roles/{role}', 'MemberController@editRole')->name('edit-role');
+        Route::delete('/members/{member}', 'MemberController@removeMember')->name('remove-member');
+        Route::delete('/commitees/{commitee}', 'MemberController@removeCommitee')->name('remove-commitee');
+        Route::delete('/roles/{role}', 'MemberController@removeRole')->name('remove-role');
+        Route::get('/commitees/{commitee}', 'MemberController@getSingleCommitee')->name('single-commitee');
+        Route::get('/members/{member}', 'MemberController@getSingleMember')->name('single-member');
+        // Route::get('/roles/{role}', 'MemberController@getSingleRole')->name('single-role');
+    });
+    
+    Route::group(['prefix' => 'finance'], function(){
+        //Finance Routes
+        Route::get('/dues', 'FinanceController@getCollectedDues')->name('get-collected-dues');
+        Route::get('/levies', 'FinanceController@getCollectedLevies')->name('get-collected-levies');
+        Route::get('/donations', 'FinanceController@getCollectedDonations')->name('get-collected-donations');
+        Route::get('/expenses', 'FinanceController@getCollectedExpenses')->name('get-collected-expenses');
+        Route::post('/record-collection', 'FinanceController@recordCollection')->name('record-collection');
+        Route::put('/edit-collection', 'FinanceController@editCollection')->name('edit-collection');
+        Route::delete('/delete-collection', 'FinanceController@deleteCollection')->name('delete-collection');
+    });
 
 
 });
