@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 class Meeting extends Model
 {
     //
-    protected $guarded = [];
+    protected $fillable = ['society_id', 'type', 'name', 'start_time', 'meeting_date', 'end_time', 'total_attendance', 'minute', 'presider'];
 
     /**
      * Society Relationship
@@ -45,7 +45,8 @@ class Meeting extends Model
     //define attendance
     public function attendances()
     {
-        return $this->belongsToMany(User::class)->using(Attendance::class);
+        return $this->belongsToMany(User::class, 'attendances')->using(Attendance::class)
+        ->withPivot('society_id');
     }
 
     //define presider

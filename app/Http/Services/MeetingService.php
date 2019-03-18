@@ -29,19 +29,23 @@ class MeetingService
         //check attendance
         if ($data['attendance'] == null)
         return new \Exception("Meeting should have at least one member in attendance");
-        //get society
-        $society = Society::find($society);
         //add society to meeting
         $data['society_id'] = $society->id;
-        //vaidate presider
-        $data['presider'] = $society->users()->where('id', $data['presider'])->first() ?? null;
-        if ($data['presider'] == null) throw new \Exception("Presider does not belong to this society");
+        $data['meeting_date'] = new \DateTime($data['meeting_date']);
+        $data['start_time'] = new \DateTime($data['start_time']);
+        $data['end_time'] = new \DateTime($data['end_time']);
+        $data['name'] = ucwords($data['type']) . " " . $data['meeting_date']->format('l, d M, Y');
         //create meeting
         $meeting = (new Meeting)->create($data);
         //add attendance
         $meeting->total_attendance = count($data['attendance']);
+        $attendances = [];
+        foreach($data['attendance'] as $att)
+        {
+            $attendances[$att] = ['society_id' => $society->id];
+        }
         //sync attendance
-        $meeting->attendances()->sync($data['attendance']);
+        $meeting->attendances()->sync($attendances);
         //save meeting
         $meeting->push();
         //return meeting
@@ -97,7 +101,7 @@ class MeetingService
     public function getMeetingReports($society, Meeting $meeting)
     {
         //get meeting reports
-        $reports = Society::find($society)->reports()->where('meeting_id', $meeting->id)->get();
+        $reports = $society->reports()->where('meeting_id', $meeting->id)->get();
         //hold count
         $reportCount = 0;
         //loop through each reports
@@ -119,7 +123,7 @@ class MeetingService
     public function getMattersArising($society, Meeting $meeting)
     {
         //get matters arising
-        $matters = Society::find($society)->matters()->where('meeting_id', $meeting->id)->get();
+        $matters = $society->matters()->where('meeting_id', $meeting->id)->get();
         //hold count
         $mattersCount = 0;
         //loop through each matters
@@ -141,7 +145,7 @@ class MeetingService
     public function getMeetingTasks($society, $meeting)
     {
         //get tasks
-        $tasks = Society::find($society)->tasks()->where('meeting_id', $meeting->id)->get();
+        $tasks = $society->tasks()->where('meeting_id', $meeting->id)->get();
         //hold count
         $tasksCount = 0;
         //loop through each tasks
@@ -237,13 +241,13 @@ class MeetingService
         //hold meetings data
         $meetingData = [];
         //get society meetings
-        $meetings = $society->meetings;
+        $meetings = $society->meetings()->orderBy('meeting_date', 'desc')->paginate($this->limit);
         //loop through meeting to get related info
         foreach ($meetings as $meeting)
         {
             $meetingData[] = $this->getMeetingDetails($society, $meeting);
         }
-        return $meetingData;
+        return [$meetingData, $meetings->links()];
     }
 
     /**
@@ -256,7 +260,7 @@ class MeetingService
     public function getMeetingDetails(Society $society, Meeting $meeting)
     {
         //get society meeting
-        $societyMeeting = $society->meetings()->where("meeting_id", $meeting->id)->first();
+        $societyMeeting = $society->meetings()->where("id", $meeting->id)->first();
         //check society meeting
         if ($societyMeeting == null) throw new \Exception("Meeting not found for this society");
         //return meeting details
@@ -491,10 +495,19 @@ class MeetingService
         }
         //set attendance count
         $data['total_attendance'] = $attendances === false ? $meeting->total_attendance : count($attendances);
+        $data['meeting_date'] = !empty($data['meeting_dat']) ? new \DateTime($data['meeting_date']) : $meeting->meeting_date;
+        $data['start_time'] = !empty($data['start_time']) ? new \DateTime($data['start_time']) : $meeting->start_time;
+        $data['end_time'] = !empty($data['end_time']) ? new \DateTime($data['end_time']): $meeting->end_time;
         //update meeting
         $meeting->update($data);
+        if($attendances){
+            foreach($attendances as $att)
+            {
+                $attendanceSync[$att] = ['society_id' => $society->id];
+            }
+        }
         //sync attendance
-        $attendances === false ?:$meeting->attendances()->sync($attendances);
+        $attendances === false ?:$meeting->attendances()->sync($attendanceSync);
         //return meeting
         return $meeting;
     }

@@ -17,14 +17,14 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::group(['middleware' => 'app_auth'], function()
+Route::group(['middleware' => ['web', 'app_auth']], function()
 {
     Route::get('/home', 'HomeController@index')->name('home');
 
     Route::group(['prefix' => 'meeting'], function(){
         //Meeting Controller Routes
         Route::get('/get-meetings', 'MeetingController@getMeetings')->name('get-meetings');
-        Route::get('/get-meeting-details', 'MeetingController@getMeetingDetails')->name('get-meeting-details');
+        Route::get('/get-meeting-details/{meeting}', 'MeetingController@getMeetingDetails')->name('get-meeting-details');
         Route::get('/get-society-reports', 'MeetingController@getSocietyReports')->name('get-society-reports');
         Route::get('/get-society-matters', 'MeetingController@getSocietyMatters')->name('get-society-matters');
         Route::get('/get-society-tasks', 'MeetingController@getSocietyTasks')->name('get-society-tasks');
@@ -36,15 +36,18 @@ Route::group(['middleware' => 'app_auth'], function()
         Route::put('/edit-report/{report}', 'MeetingController@editReport')->name('edit-report');
         Route::put('/edit-task/{task}', 'MeetingController@editTask')->name('edit-task');
         Route::put('/edit-matter/{matter}', 'MeetingController@editMatter')->name('edit-matter');
-        Route::put('/edit-meeting/{meeting}', 'MeetingController@editMeeting')->name('edit-meeting');
+        Route::post('/edit-meeting/{meeting}', 'MeetingController@editMeeting')->name('edit-meeting');
+        Route::get('/edit-meeting/{meeting}', 'MeetingController@displayEditMeetingForm')->name('show-edit-meeting');
         Route::post('/create-report', 'MeetingController@createReport')->name('create-report');
         Route::post('/create-task', 'MeetingController@createTask')->name('create-task');
         Route::post('/create-matter', 'MeetingController@createMatter')->name('create-matter');
         Route::post('/create-meeting', 'MeetingController@createMeeting')->name('create-meeting');
+        Route::get('/create-meeting', 'MeetingController@displayMeetingForm')->name('show-create-meeting');
         Route::delete('/delete-matter/{matter}', 'MeetingController@deleteMatter')->name('delete-matter');
         Route::delete('/delete-task/{task}', 'MeetingController@deleteTask')->name('delete-task');
         Route::delete('/delete-report/{report}', 'MeetingController@deleteReport')->name('delete-report');
-        Route::delete('/delete-meeting/{meeting}', 'MeetingController@deleteMeeting')->name('delete-meeting');
+        Route::get('/delete-meeting/{meeting}', 'MeetingController@deleteMeeting')->name('delete-meeting');
+        Route::get('/confirm-delete-meeting/{meeting}', 'MeetingController@confirmDeleteMeeting')->name('confirm-delete-meeting');
     });
 
     Route::group(['prefix' => 'member'], function(){

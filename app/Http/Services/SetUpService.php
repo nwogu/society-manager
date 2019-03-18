@@ -106,7 +106,7 @@ class SetUpService
             if($society instanceof Society)
             {
                 //initialize session data
-                session(["society", $society->id]);
+                session(["society" => $society->id]);
                 //add user to society
                 $this->addUserToSociety($user, $society, $data['role']);
                 //login user
@@ -171,7 +171,7 @@ class SetUpService
             if ($society->users()->where('user_id', $user->id)->exists())
             {
                 //initialize session data
-                $request->session()->put('society', $society->id);
+                session(['society' => $society->id]);
                 //return true
                 return true;
             }
@@ -207,16 +207,14 @@ class SetUpService
      * 
      * @return array
      */
-    public static function loadGeneralData($society)
+    public static function loadGeneralData(Society $society)
     {
-        //Get Society
-        $society = Society::find($society);
         //set Society Name
         $data['name'] = $society->name;
         //Get Total Members
         $data['members'] = $society->users()->count() ?? 0;
         //Get Total Collections
-        $data['collections'] = $society->collections()->sum('received') ?? 0;
+        // $data['collections'] = $society->collections()->sum('received') ?? 0;
         //Get Pending Tasks
         $data['tasks'] = $society->tasks()->where('status', false)->get()->count() ?? 0;
         //Get Pending Matters Arisng

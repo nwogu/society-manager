@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use App\Society;
+use App\Http\Services\SetUpService;
 use Illuminate\Support\Facades\Auth;
 
 class VerifySociety
@@ -29,6 +30,8 @@ class VerifySociety
                 //check if user is part of society
                 if($society->users()->where('user_id', Auth::user()->id)->exists())
                 {
+                    //share general data
+                    view()->share('generalData', SetUpService::loadGeneralData($society));
                     return $next($request);
                 }
             }

@@ -14,6 +14,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('dashboard.meetings');
+        return \redirect()->route('get-meetings');
     }
 }

@@ -59,69 +59,74 @@
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
                         <!-- Add More Side Bar Menus to Mobile-->
-                        @if (Route::currentRouteName() == 'dashboard')
-                        <li class="active">
-                        @else
-                        <li>
-                        @endif
-                            <a href="{{ route('dashboard') }}">
-                            <i class="fas fa-tachometer-alt"></i>Overview</a>
-                        </li>
-                        @if (Route::currentRouteName() == 'contacts')
+                        @if (Route::currentRouteName() == 'get-meetings')
                         <li class="active has-sub">
                         @else
                         <li class="has-sub">
                         @endif
                         <a class="js-arrow" href="#">
-                                <i class="fas fa-address-book"></i>Contacts</a>
+                            <i class="fas fa-tachometer-alt"></i>Meetings</a>
                             <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
                                 <li>
-                                    <a href="{{ route('contacts') }}">Contacts</a>
+                                    <a href="{{ route('get-meetings') }}">All Meetings</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('group-contacts') }}">Group Contacts</a>
+                                    <a href="{{ route('get-society-reports') }}">Reports</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('get-society-matters') }}">Matters</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('get-society-tasks') }}">Tasks</a>
                                 </li>
                             </ul>
                         </li>
-                        @if (Route::currentRouteName() == 'tasks')
-                        <li class="active">
-                        @else
-                        <li>
-                        @endif
-                            <a href="#">
-                                <i class="fas fa-calendar-alt"></i>Tasks</a>
-                        </li>
-                        @if (Route::currentRouteName() == 'templates')
+                        @if (Route::currentRouteName() == 'members')
                         <li class="active has-sub">
                         @else
                         <li class="has-sub">
                         @endif
-                            <a class="js-arrow" href="#">
-                                <i class="fas fa-clipboard"></i>Templates</a>
+                        <a class="js-arrow" href="#">
+                                <i class="fas fa-address-book"></i>Members</a>
                             <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
                                 <li>
-                                    <a href="{{ route('templates') }}">Templates</a>
+                                    <a href="{{ route('members') }}">All Members</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('templates') }}">Group Template</a>
+                                    <a href="{{ route('commitees') }}">Commitees</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('floor-members') }}">Floor Members</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('executives') }}">Executivies</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('roles') }}">Roles</a>
                                 </li>
                             </ul>
                         </li>
-                        @if (Route::currentRouteName() == 'campaigns')
-                        <li class="active">
+                        @if (Route::currentRouteName() == 'get-collected-dues')
+                        <li class="active has-sub">
                         @else
-                        <li>
+                        <li class="has-sub">
                         @endif
-                            <a href="{{ route('campaigns') }}">
-                                <i class="fas fa-bullhorn"></i>Campaigns</a>
-                        </li>
-                        @if (Route::currentRouteName() == 'reviews')
-                        <li class="active">
-                        @else
-                        <li>
-                        @endif
-                            <a href="{{ route('reviews') }}">
-                                <i class="far fa-comment-alt"></i>Reviews</a>
+                        <a class="js-arrow" href="#">
+                                <i class="fas fa-address-book"></i>Finance</a>
+                            <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
+                            <li>
+                                    <a href="{{ route('get-collected-dues') }}">Dues</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('get-collected-levies') }}">Levies</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('get-collected-donations') }}">Donations</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('get-collected-expenses') }}">Expenses</a>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 </div>
@@ -138,69 +143,74 @@
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
                         <!-- Add More Side Bar Menus to Desktop-->
-                        @if (Route::currentRouteName() == 'dashboard')
-                        <li class="active">
-                        @else
-                        <li>
-                        @endif
-                            <a href="{{ route('dashboard') }}">
-                            <i class="fas fa-tachometer-alt"></i>Overview</a>
-                        </li>
-                        @if (Route::currentRouteName() == 'contacts')
+                        @if (Route::currentRouteName() == 'get-meetings')
                         <li class="active has-sub">
                         @else
                         <li class="has-sub">
                         @endif
                         <a class="js-arrow" href="#">
-                                <i class="fas fa-address-book"></i>Contacts</a>
+                            <i class="fas fa-tachometer-alt"></i>Meetings</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
-                                <li>
-                                    <a href="{{ route('contacts') }}">Contacts</a>
+                            <li>
+                                    <a href="{{ route('get-meetings') }}">All Meetings</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('group-contacts') }}">Group Contacts</a>
+                                    <a href="{{ route('get-society-reports') }}">Reports</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('get-society-matters') }}">Matters</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('get-society-tasks') }}">Tasks</a>
                                 </li>
                             </ul>
                         </li>
-                        @if (Route::currentRouteName() == 'tasks')
-                        <li class="active">
-                        @else
-                        <li>
-                        @endif
-                            <a href="#">
-                                <i class="fas fa-calendar-alt"></i>Tasks</a>
-                        </li>
-                        @if (Route::currentRouteName() == 'templates')
+                        @if (Route::currentRouteName() == 'members')
                         <li class="active has-sub">
                         @else
                         <li class="has-sub">
                         @endif
-                            <a class="js-arrow" href="#">
-                                <i class="fas fa-clipboard"></i>Templates</a>
+                        <a class="js-arrow" href="#">
+                                <i class="fas fa-address-book"></i>Members</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a href="{{ route('templates') }}">Templates</a>
+                                    <a href="{{ route('members') }}">All Members</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('group-templates') }}">Group Template</a>
+                                    <a href="{{ route('commitees') }}">Commitees</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('floor-members') }}">Floor Members</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('executives') }}">Executivies</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('roles') }}">Roles</a>
                                 </li>
                             </ul>
                         </li>
-                        @if (Route::currentRouteName() == 'campaigns')
-                        <li class="active">
+                        @if (Route::currentRouteName() == 'get-collected-dues')
+                        <li class="active has-sub">
                         @else
-                        <li>
+                        <li class="has-sub">
                         @endif
-                            <a href="{{ route('campaigns') }}">
-                                <i class="fas fa-bullhorn"></i>Campaigns</a>
-                        </li>
-                        @if (Route::currentRouteName() == 'reviews')
-                        <li class="active">
-                        @else
-                        <li>
-                        @endif
-                            <a href="{{ route('reviews') }}">
-                                <i class="far fa-comment-alt"></i>Reviews</a>
+                        <a class="js-arrow" href="#">
+                                <i class="fas fa-address-book"></i>Finance</a>
+                            <ul class="list-unstyled navbar__sub-list js-sub-list">
+                                <li>
+                                    <a href="{{ route('get-collected-dues') }}">Dues</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('get-collected-levies') }}">Levies</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('get-collected-donations') }}">Donations</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('get-collected-expenses') }}">Expenses</a>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 </nav>
@@ -264,7 +274,7 @@
                                                     <h5 class="name">
                                                         <a href="#">{{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</a>
                                                     </h5>
-                                                    <span class="email">{{ Auth::user()->company['name'] }}</span>
+                                                    <span class="email">{{ $generalData['name'] }}</span>
                                                 </div>
                                             </div>
                                             <div class="account-dropdown__body">

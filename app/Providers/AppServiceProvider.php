@@ -14,8 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //share general data
-        view()->share('generalData', SetUpService::loadGeneralData(session('society')));
+        
     }
 
     /**

@@ -14,7 +14,7 @@ class MeetingRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,29 +24,33 @@ class MeetingRequest extends FormRequest
      */
     public function rules()
     {
+        $meetingTypes = Constants::MEETING_TYPES;
+        $meetingTypes = implode(',', $meetingTypes);
         //switch method
         switch($this->method())
         {
             case "POST":
                 return [
-                    "type" => "required|string|in:". Constants::MEETING_TYPES,
-                    "name" => "required|string",
+                    "type" => "required|string|in:{$meetingTypes}",
                     "minute" => "required",
-                    "start_time" => "required|date",
-                    "end_time" => "required|date",
+                    "meeting_date" => "required|string",
+                    "start_time" => "required|string",
+                    "end_time" => "required|string",
                     "presider" => "required|integer|exists:users,id",
                     "attendance" => "required|array|min:1"
                 ];
             case "PUT":
                 return [
-                    "type" => "string|in:". Constants::MEETING_TYPES,
-                    "name" => "string",
+                    "type" => "string|in:{$meetingTypes}",
                     "minute" => "string",
-                    "start_time" => "date",
-                    "end_time" => "date",
+                    "meeting_date" => "string",
+                    "start_time" => "string",
+                    "end_time" => "string",
                     "presider" => "integer|exists:users,id",
                     "attendance" => "array|min:1"
                 ];
+            default:
+            return [];
         }
     }
 }

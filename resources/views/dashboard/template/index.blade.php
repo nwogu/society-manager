@@ -74,7 +74,7 @@
             <div class="row">
             @if (!$emailTemplates->isEmpty())
             @foreach ($emailTemplates as $template)
-            <div class="col-md-12">
+                <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
                             <div class="float-left">

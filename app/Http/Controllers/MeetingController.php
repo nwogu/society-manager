@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Meeting;
+use App\Society;
+use App\Constants;
 use Illuminate\Http\Request;
+use App\Http\Requests\MeetingRequest;
 use App\Http\Services\MeetingService;
 
 class MeetingController extends Controller
@@ -17,10 +21,13 @@ class MeetingController extends Controller
      */
     protected $meetingService;
 
-    public function __construct(Request $request, MeetingService $meetingService)
+    public function __construct(MeetingService $meetingService)
     {
-        //Resolve Society
-        $this->society = Society::find($request->session->get('society'));
+        $this->middleware(function ($request, $next){
+            //Resolve Society
+            $this->society = Society::find($request->session()->get("society"));
+            return $next($request);
+        });
         //Resolve Meeting Service
         $this->meetingService = $meetingService;
     }
@@ -33,7 +40,7 @@ class MeetingController extends Controller
         //Get meeting data
         $meetingData = $this->meetingService->getMeetingData($this->society);
         //return
-
+        return view('dashboard.meeting.all-meetings', ['meetingData' => $meetingData[0], 'links' => $meetingData[1]]);
     }
 
     /**
@@ -44,6 +51,8 @@ class MeetingController extends Controller
     {
         //Get meeting details
         $meetingDetails = $this->meetingService->getMeetingDetails($this->society, $meeting);
+        //return
+        return view('dashboard.meeting.view-meeting', ['meeting' => $meetingDetails]);
     }
 
     /**
@@ -161,13 +170,40 @@ class MeetingController extends Controller
     }
 
     /**
+     * Show meeting
+     */
+    public function displayMeetingForm()
+    {
+        return view(
+            'dashboard.meeting.create-meeting', 
+            ['users' => $this->society->users, 
+            'types' => Constants::MEETING_TYPES]
+        );
+    }
+
+    /**
+     * Show meeting
+     */
+    public function displayEditMeetingForm(Meeting $meeting)
+    {
+        return view(
+            'dashboard.meeting.edit-meeting', 
+            ['users' => $this->society->users, 
+            'types' => Constants::MEETING_TYPES,
+            'meeting' => $meeting
+            ]
+        );
+    }
+
+    /**
      * Create Meeting
      * @return Response
      */
     public function createMeeting(MeetingRequest $request)
     {
         //Create Meeting
-        $mmeting = $this->meetingService->createMeeting($request->validated(), $this->society);
+        $meeting = $this->meetingService->createMeeting($request->validated(), $this->society);
+        return redirect()->route('get-meetings')->with("message", "Meeting Created Successfully");
 
     }
 
@@ -209,6 +245,23 @@ class MeetingController extends Controller
     {
         //Edit Meeting
         $meeting = $this->meetingService->editMeeting($this->society, $meeting, $request->validated());
+        return \redirect()->route('get-meeting-details', ['meeting' => $meeting->id])->with("message", "Meeting Edited Succesfully");
+    }
+
+    /**
+     * Confirm Meeting Delete
+     */
+    public function confirmDeleteMeeting(Meeting $meeting, Request $request){
+        //Construct message
+        $message = "Are you sure you want to delete? ";
+        //Add To Message
+        $message .= "<a href='".route('delete-meeting', ['meeting' => $meeting->id])."'>Yes</a> ";
+        //Add To Message
+        $message .= "<a href='".route('get-meetings')."'>No</a>";
+        //add flash message on error
+        $request->session()->flash('message', $message);
+        //Return redirect
+        return redirect()->back();
     }
 
     /**
@@ -219,6 +272,7 @@ class MeetingController extends Controller
     {
         //Delete Meeting
         $this->meetingService->deleteMeeting($this->society, $meeting);
+        return \redirect()->route('get-meetings')->with("message", "Meeting Removed Successfully");
     }
 
     /**

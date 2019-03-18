@@ -17,6 +17,7 @@ class CreateMeetingsTable extends Migration
             $table->increments('id');
             $table->integer('society_id')->unsigned();
             $table->string('name');
+            $table->dateTime('meeting_date');
             $table->string('type');
             $table->text('minute');
             $table->dateTime('start_time');
