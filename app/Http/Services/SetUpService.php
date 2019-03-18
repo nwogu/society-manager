@@ -98,28 +98,19 @@ class SetUpService
         ->orWhere('phone', $data['phone'])->first();
 
         //check user
-        if($user)
+        if(!$user) $user = $this->createUser($data);
+        //create society
+        $society = $this->createSociety($data);
+        //check if society was created
+        if($society instanceof Society)
         {
-            //create society
-            $society = $this->createSociety($data);
-            //check if society was created
-            if($society instanceof Society)
-            {
-                //initialize session data
-                session(["society" => $society->id]);
-                //add user to society
-                $this->addUserToSociety($user, $society, $data['role']);
-                //login user
-                auth()->login($user);
-                //return user
-                return $user;
-            }
+            //initialize session data
+            session(["society" => $society->id]);
+            //add user to society
+            $this->addUserToSociety($user, $society, $data['role']);
         }
 
-        //create new user account
-        $user = $this->createUser($data);
-        //set up account
-        $this->setupAccount($data);
+        return $user;
     }
 
     /**
