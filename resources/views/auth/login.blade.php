@@ -30,6 +30,13 @@
             <div class="card-body px-lg-5 py-lg-5">
               <div class="text-center text-muted mb-4">
                 <small>Sign in to a society</small>
+                @if($errors->any())
+                @foreach($errors->all() as $message)
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    {!! $message !!}
+                    </div>
+                @endforeach
+                @endif
               </div>
               <form role="form" method="POST" action="{{ route('login') }}">
               @csrf

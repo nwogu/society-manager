@@ -127,7 +127,7 @@
                                                     </a>
                                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                                     <a class="dropdown-item" href="{{ route('get-meeting-details', ['meeting' => $meetingDetails['meeting']->id]) }}">details</a>
-                                                    <a class="dropdown-item" href="{{ route('get-meeting-details', ['meeting' => $meetingDetails['meeting']->id]) }}">download minutes</a>
+                                                    <a class="dropdown-item" href="{{ route('download-minute', ['meeting' => $meetingDetails['meeting']->id]) }}">download minutes</a>
                                                     <a class="dropdown-item" href="{{ route('get-meeting-details', ['meeting' => $meetingDetails['meeting']->id]) }}">send minutes</a>
                                                     </div>
                                                     </div>

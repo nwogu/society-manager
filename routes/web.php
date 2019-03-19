@@ -47,6 +47,7 @@ Route::group(['middleware' => ['web', 'app_auth']], function()
         Route::delete('/delete-task/{task}', 'MeetingController@deleteTask')->name('delete-task');
         Route::delete('/delete-report/{report}', 'MeetingController@deleteReport')->name('delete-report');
         Route::get('/delete-meeting/{meeting}', 'MeetingController@deleteMeeting')->name('delete-meeting');
+        Route::get('/download-minute/{meeting}', 'MeetingController@downloadMinute')->name('download-minute');
         Route::get('/confirm-delete-meeting/{meeting}', 'MeetingController@confirmDeleteMeeting')->name('confirm-delete-meeting');
     });
 

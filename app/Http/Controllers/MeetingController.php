@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Meeting;
 use App\Society;
 use App\Constants;
+use Barryvdh\DomPDF\PDF;
 use Illuminate\Http\Request;
 use App\Http\Requests\MeetingRequest;
 use App\Http\Services\MeetingService;
@@ -273,6 +274,17 @@ class MeetingController extends Controller
         //Delete Meeting
         $this->meetingService->deleteMeeting($this->society, $meeting);
         return \redirect()->route('get-meetings')->with("message", "Meeting Removed Successfully");
+    }
+
+    /**
+     * Download Minute
+     * @return Response
+     */
+    public function downloadMinute(Meeting $meeting)
+    {
+        $pdf = PDF::loadView('pdf.minutes', ['meeting' => $meeting]);
+        $pdfName = substr($this->society->name, 0, 3) . "_" . time() . "." . 'pdf';
+        return $pdf->download($pdfName);
     }
 
     /**

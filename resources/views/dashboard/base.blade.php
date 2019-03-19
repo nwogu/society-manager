@@ -282,14 +282,14 @@
                                                     <a href="#">
                                                         <i class="zmdi zmdi-account"></i>Account</a>
                                                 </div>
-                                                <div class="account-dropdown__item">
+                                                <!-- <div class="account-dropdown__item">
                                                     <a href="#">
                                                         <i class="zmdi zmdi-settings"></i>Setting</a>
                                                 </div>
                                                 <div class="account-dropdown__item">
                                                     <a href="#">
                                                         <i class="zmdi zmdi-money-box"></i>Billing</a>
-                                                </div>
+                                                </div> -->
                                             </div>
                                             <div class="account-dropdown__footer">
                                             <a class="dropdown-item" href="{{ route('logout') }}"

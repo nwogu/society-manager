@@ -90,7 +90,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="inputIsValid" class=" form-control-label">Meeting Date</label>
-                                            <input type="text" id="campaignName" name="meeting_date" class=" form-control-success form-control" value="{{$meeting->name}}" required>
+                                            <input type="text" id="campaignName" name="meeting_date" class=" form-control-success form-control" value="{{ date('d/m/y', strtotime($meeting->meeting_date)) }}" required>
                                         </div>
                                         <div class="form-group">
                                             <label for="inputIsInvalid" class=" form-control-label">Type</label>
