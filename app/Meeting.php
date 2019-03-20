@@ -16,6 +16,8 @@ class Meeting extends Model
     //
     protected $fillable = ['society_id', 'type', 'name', 'start_time', 'meeting_date', 'end_time', 'total_attendance', 'minute', 'presider'];
 
+    protected $dates = ['start_time', 'meeting_date', 'end_time'];
+
     /**
      * Society Relationship
      */

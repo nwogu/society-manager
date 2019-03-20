@@ -5,10 +5,13 @@
  */
 namespace App\Http\Services;
 
+use App\Role;
 use App\User;
 use App\Society;
 use App\Constants;
 use App\Http\Services\SetUpService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
@@ -36,17 +39,15 @@ class UserService
      * 
      * @return User $user
      */
-    public function addNewMember($userData, $society)
+    public function addNewMember($society, $userData)
     {
-        //get society
-        $society = Society::find($society);
         //create user
         $user = $this->setUpService->createUser($userData);
         //check user
         if ($user instanceof User)
         {
             //add user to society
-            $user = $this->setUpService->addUserToSociety($user, $society, $userData['role']);
+            $user = $this->setUpService->addUserToSociety($user, $society, $userData['role'], $userData['joined']);
             //return user
             return $user;
         }
@@ -62,11 +63,11 @@ class UserService
     public function changeUserRole($currentRole, $user, $society, $newRole)
     {
         //get current user role
-        $currentRole = Role::where('id', $currentRole)->where('society_id', $society)->first();
-        if($currentRole == null) throw new \Exception("Role not found for this society");
+        $currentRole = Role::where('id', $currentRole)->where('society_id', $society->id)->first();
+        if($currentRole == null) \redirect()->back()->withErrors("Role not found for this society");
         //get new role
-        $newRole = Role::where('id', $newRole)->where('society_id', $society)->first();
-        if($newRole == null) throw new \Exception("Role not found for this society");
+        $newRole = Role::where('id', $newRole)->where('society_id', $society->id)->first();
+        if($newRole == null) \redirect()->back()->withErrors("Role not found for this society");
         //dettach role
         $user->roles()->detach($currentRole);
         //attach new role
@@ -164,7 +165,7 @@ class UserService
     public function getAllMembers(Society $society)
     {
         //Get Members
-        return $society->users()->paginate($this->limit);
+        return $society->users()->orderBy('joined', 'desc')->paginate($this->limit);
     }
 
     /**
@@ -176,12 +177,11 @@ class UserService
     public function getExecutives(Society $society)
     {
         //Get Executives
-        return User::query()
-        ->leftJoin('user_role', 'user_role.user_id', '=', 'users.id')
-        ->leftJoin('roles', 'roles.id', '=', 'user_role.role_id')
-        ->where('society_id', $society->id)
-        ->where('executive', true)
-        ->paginate($this->limit);
+        $users = $society->users;
+        foreach($users as $user){
+            if($user->isExecutive($society->id)) $executives[] = $user;
+        }
+        return $executives;
     }
 
     /**
@@ -221,7 +221,7 @@ class UserService
      */
     public function getSocietyRoles(Society $society)
     {
-        return $this->setUpService->getSocietyRoles($society);
+        return $this->setUpService->getSocietyRoles($society->id);
     }
 
     /**
@@ -236,7 +236,7 @@ class UserService
     {
         //Get Commitee
         $commitee = $society->commitees()->where('id', $commitee->id)->first();
-        if($commitee == null) throw new \Exception("Commitee not found for this society");
+        if($commitee == null) \redirect()->back()->withErrors("Commitee not found for this society");
         $commitee->name = $data['name'] ?? $commitee->name;
         $commitee->save();
         if(isset($data['members'])) $commitee->members()->sync($data['members']);
@@ -255,18 +255,48 @@ class UserService
     public function editMember(Society $society, $data, User $user)
     {
         //Get Member
-        $member = $society->users()->where('id', $user->id)->first();
+        $member = $society->users()->where('users.id', $user->id)->first();
         //Get Member
-        if($member == null) throw new \Exception("Member not found for this society");
+        if($member == null) \redirect()->back()->withErrors("Member not found for this society");
+        //check unique email
+        if(!empty($data['email']))
+        {
+            if($society->users()->where('email', $data['email'])->exists() && $member->email != $data['email'])
+            {
+                return \redirect()->back()->withErrors("email is already taken");
+            }
+        }
+
+        //check unique phone
+        if(!empty($data['phone']))
+        {
+            if(User::where('phone', $data['phone'])->exists() && $member->phone !== $data['phone'])
+            {
+                return \redirect()->back()->withErrors("phone is already taken");
+            }
+        }
+
         //Check for role change
         if (isset($data['role']) && $data['role'] != null) 
         {
             //Get current user role
-            $currentRole = $member->roles()->where('society_id', $society->id)-first();
+            $currentRole = $member->role($society->id);
             $member = $this->changeUserRole($currentRole->id, $member, $society, $data['role']);
+        }
+        if(!empty($data['password']))
+        {
+            if($data['password'] !== $data['password_confirmation']){
+                \redirect()->back()->withErrors("passwords do not match");
+            }
         }
         //hash password
         $data['password'] = !empty($data['password']) ? Hash::make($data['password']) : $member->password;
+        //check joined
+        if(!empty($data['joined']))
+        {
+            $joined = new \DateTime($data['joined']);
+            $member->pivot->update(['joined' => $joined]);
+        }
         return $member->update($data);
     }
 
@@ -278,11 +308,11 @@ class UserService
      * 
      * @return Role $role
      */
-    public function editRole(Society $society, $array, Role $role)
+    public function editRole(Society $society, $data, Role $role)
     {
         //Get Role
         $role = $society->roles()->where('id', $role->id)->first();
-        if ($role == null) throw new \Exception("Role not found for this society");
+        if ($role == null) \redirect()->back()->withErrors("Role not found for this society");
         return $role->update($data);
     }
 
@@ -293,7 +323,9 @@ class UserService
      */
     public function removeMember(Society $society, User $member)
     {
-        return $society->users()->dettach($member);
+        if(Auth::user()->id == $member->id)return;
+        $member->societies()->detach($society->id);
+        return;
     }
 
     /**
@@ -305,7 +337,16 @@ class UserService
     {
         //get role
         $role = $society->roles()->where('id', $role->id)->first();
-        if ($role == null) throw new \Exception("Role not found for this society");
+        if ($role == null) \redirect()->back()->withErrors("Role not found for this society");
+        if(User::query()
+        ->leftJoin('user_role', 'user_role.user_id', '=', 'users.id')
+        ->leftJoin('user_society', 'user_society.user_id', '=', 'users.id')
+        ->where('society_id', $society->id)
+        ->where('role_id', $role->id)
+        ->first() !== null)
+        {
+            return \redirect()->back()->withErrors("Role cannot be deleted because it is currently assigned to one or more members. Reassign {$role->role} to delete.");
+        }
         return $role->delete();
     }
 
@@ -318,7 +359,7 @@ class UserService
     {
         //Get Commitee
         $commitee = $society->commitees()->where('id', $commitee->id)->first();
-        if ($commitee == null) throw new \Exception("Commitee not found for this society");
+        if ($commitee == null) \redirect()->back()->withErrors("Commitee not found for this society");
         return $commitee->delete();
     }
 
@@ -332,8 +373,8 @@ class UserService
     public function getSingleMember(Society $society, User $member)
     {
         //Get member
-        $member = $society->users()->where('id', $member->id)->first();
-        if ($member == null)  throw new \Exception("Member not found in this society");
+        $member = $society->users()->where('user_id', $member->id)->first();
+        if ($member == null)  \redirect()->back()->withErrors("Member not found in this society");
         return $member;
     }
 
@@ -348,7 +389,7 @@ class UserService
     {
         //Get Commitee
         $commitee = $society->commitees()->where('id', $commitee->id)->first();
-        if ($commitee == null)  throw new \Exception("Commitee not found in this society");
+        if ($commitee == null)  \redirect()->back()->withErrors("Commitee not found in this society");
         return $commitee;
     }
 }

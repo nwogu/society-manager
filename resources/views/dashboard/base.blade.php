@@ -10,7 +10,7 @@
     <meta name="keywords" content="customer review">
 
     <!-- Title Page-->
-    <title>Dashboard | Craaser</title>
+    <title>Dashboard | Society Manager</title>
 
     <!-- Fontfaces CSS-->
     <link href="{{ URL::asset('css/font-face.css') }}" rel="stylesheet" media="all">
@@ -46,7 +46,7 @@
             <div class="header-mobile__bar">
                 <div class="container-fluid">
                     <div class="header-mobile-inner">
-                        <strong><b>Craaser</b></strong>
+                        <strong><b>Society Manager</b></strong>
                         <button class="hamburger hamburger--slider" type="button">
                             <span class="hamburger-box">
                                 <span class="hamburger-inner"></span>
@@ -71,7 +71,7 @@
                                     <a href="{{ route('get-meetings') }}">All Meetings</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('get-society-reports') }}">Reports</a>
+                                    <a href="#">Reports</a>
                                 </li>
                                 <li>
                                     <a href="{{ route('get-society-matters') }}">Matters</a>
@@ -93,10 +93,7 @@
                                     <a href="{{ route('members') }}">All Members</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('commitees') }}">Commitees</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('floor-members') }}">Floor Members</a>
+                                    <a href="#">Commitees</a>
                                 </li>
                                 <li>
                                     <a href="{{ route('executives') }}">Executivies</a>
@@ -112,19 +109,19 @@
                         <li class="has-sub">
                         @endif
                         <a class="js-arrow" href="#">
-                                <i class="fas fa-address-book"></i>Finance</a>
+                                <i class="fas fa-money-bill-alt"></i>Finance</a>
                             <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
                             <li>
-                                    <a href="{{ route('get-collected-dues') }}">Dues</a>
+                                    <a href="#">Dues</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('get-collected-levies') }}">Levies</a>
+                                    <a href="#">Levies</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('get-collected-donations') }}">Donations</a>
+                                    <a href="#">Donations</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('get-collected-expenses') }}">Expenses</a>
+                                    <a href="#">Expenses</a>
                                 </li>
                             </ul>
                         </li>
@@ -137,7 +134,7 @@
         <!-- MENU SIDEBAR-->
         <aside class="menu-sidebar d-none d-lg-block">
             <div class="logo">
-            <strong><b>Craaser</b></strong>
+            <strong><b>Society Manager</b></strong>
             </div>
             <div class="menu-sidebar__content js-scrollbar1">
                 <nav class="navbar-sidebar">
@@ -155,7 +152,7 @@
                                     <a href="{{ route('get-meetings') }}">All Meetings</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('get-society-reports') }}">Reports</a>
+                                    <a href="#">Reports</a>
                                 </li>
                                 <li>
                                     <a href="{{ route('get-society-matters') }}">Matters</a>
@@ -177,10 +174,7 @@
                                     <a href="{{ route('members') }}">All Members</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('commitees') }}">Commitees</a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('floor-members') }}">Floor Members</a>
+                                    <a href="#">Commitees</a>
                                 </li>
                                 <li>
                                     <a href="{{ route('executives') }}">Executivies</a>
@@ -196,19 +190,19 @@
                         <li class="has-sub">
                         @endif
                         <a class="js-arrow" href="#">
-                                <i class="fas fa-address-book"></i>Finance</a>
+                                <i class="fas fa-money-bill-alt"></i>Finance</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a href="{{ route('get-collected-dues') }}">Dues</a>
+                                    <a href="#">Dues</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('get-collected-levies') }}">Levies</a>
+                                    <a href="#">Levies</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('get-collected-donations') }}">Donations</a>
+                                    <a href="#">Donations</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('get-collected-expenses') }}">Expenses</a>
+                                    <a href="#">Expenses</a>
                                 </li>
                             </ul>
                         </li>
@@ -250,7 +244,7 @@
                                         <span class="quantity">0</span>
                                         <div class="notifi-dropdown js-dropdown">
                                             <div class="notifi__title">
-                                                <p>You have 0 Notifications</p>
+                                                <p>You have 0 Messages</p>
                                             </div>
                                         </div>
                                     </div>
@@ -279,8 +273,8 @@
                                             </div>
                                             <div class="account-dropdown__body">
                                                 <div class="account-dropdown__item">
-                                                    <a href="#">
-                                                        <i class="zmdi zmdi-account"></i>Account</a>
+                                                    <a href="{{route('single-member', ['member' => Auth::user()->id])}}">
+                                                        <i class="zmdi zmdi-account"></i>Profile</a>
                                                 </div>
                                                 <!-- <div class="account-dropdown__item">
                                                     <a href="#">
@@ -288,7 +282,7 @@
                                                 </div>
                                                 <div class="account-dropdown__item">
                                                     <a href="#">
-                                                        <i class="zmdi zmdi-money-box"></i>Billing</a>
+                                                        <i class="zmdi zmdi-money-bill-alt-box"></i>Billing</a>
                                                 </div> -->
                                             </div>
                                             <div class="account-dropdown__footer">

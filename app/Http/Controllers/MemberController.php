@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Role;
 use App\User;
+use App\Constants;
+use App\Society;
 use App\Commitee;
 use Illuminate\Http\Request;
 use App\Http\Requests\RoleRequest;
@@ -23,12 +25,15 @@ class MemberController extends Controller
      */
     protected $society;
 
-    public function __construct(UserService $userService, Request $request)
+    public function __construct(UserService $userService)
     {
+        $this->middleware(function ($request, $next){
+            //Resolve Society
+            $this->society = Society::find($request->session()->get("society"));
+            return $next($request);
+        });
         //Inject User Service
         $this->userService = $userService;
-        //Resolve Society
-        $this->society = Society::find($request->session->get('society'));
     }
 
     /**
@@ -39,6 +44,7 @@ class MemberController extends Controller
     {
         //Get Members
         $members = $this->userService->getAllMembers($this->society);
+        return view('dashboard.member.all-members', ['members' => $members]);
 
     }
 
@@ -50,6 +56,7 @@ class MemberController extends Controller
     {
         //Get Executives
         $executivies = $this->userService->getExecutives($this->society);
+        return view('dashboard.member.executives', ['executives' => $executivies]);
     }
 
     /**
@@ -80,6 +87,20 @@ class MemberController extends Controller
     {
         //Get Roles
         $roles = $this->userService->getSocietyRoles($this->society);
+        return view('dashboard.role.all-roles', ['roles' => $roles]);
+    }
+
+    /**
+     * Show add member form
+     */
+    public function displayAddMemberForm()
+    {
+        return view(
+            'dashboard.member.add-member', 
+            ['roles' => $this->society->roles, 
+            'sexes' => Constants::SEXES
+            ]
+        );
     }
 
     /**
@@ -89,7 +110,16 @@ class MemberController extends Controller
     public function addNewMember(MemberRequest $request)
     {
         //Add new member
-        $member = $this->userService->addNewMember($this->society, $request->validated());
+        $member = $this->userService->addNewMember($this->society, $request->all());
+        return \redirect()->route('members')->with("message", "Member Added Successfully");
+    }
+
+    /**
+     * Show add member form
+     */
+    public function displayCreateRoleForm()
+    {
+        return view('dashboard.role.create-role');
     }
 
     /**
@@ -99,7 +129,8 @@ class MemberController extends Controller
     public function createRole(RoleRequest $request)
     {
         //Create Role
-        $role = $this->userService->createSocietyRole($this->society, $request->validated());
+        $role = $this->userService->createSocietyRole($this->society->id, $request->validated());
+        return \redirect()->route('roles')->with("message", "Role Created Successfully");
     }
 
     /**
@@ -122,6 +153,20 @@ class MemberController extends Controller
         $commitee = $this->userService->editCommitee($this->society, $request->validated(), $commitee);
     }
 
+    /**
+     * Show meeting
+     */
+    public function displayEditMemberForm(User $member)
+    {
+        return view(
+            'dashboard.member.edit-member', 
+            ['roles' => $this->society->roles, 
+            'sexes' => Constants::SEXES,
+            'user' => $this->society->users()->where('user_id', $member->id)->first()
+            ]
+        );
+    }
+
      /**
      * Edit Member
      * @return Response
@@ -129,7 +174,17 @@ class MemberController extends Controller
     public function editMember(MemberRequest $request, User $member)
     {
         //Edit User
-        $member = $this->userService->editMember($this->society, $request->validated(), $member);
+        $member = $this->userService->editMember($this->society, $request->all(), $member);
+        if($request->session()->has('errors')) return \redirect()->back();
+        return \redirect()->route('members')->with("message", "Member Details Updated Successfully");
+    }
+
+    /**
+     * Show add member form
+     */
+    public function displayEditRoleForm(Role $role)
+    {
+        return view('dashboard.role.edit-role', ['role' => $role]);
     }
 
     /**
@@ -140,6 +195,23 @@ class MemberController extends Controller
     {
         //Edit Role
         $role = $this->userService->editRole($this->society, $request->validated(), $role);
+        return \redirect()->route('roles')->with("message", "Role Updated Successfully");
+    }
+
+    /**
+     * Confirm Member Delete
+     */
+    public function confirmRemoveMember(User $member, Request $request){
+        //Construct message
+        $message = "Are you sure you want to remove? ";
+        //Add To Message
+        $message .= "<a href='".route('remove-member', ['member' => $member->id])."'>Yes</a> ";
+        //Add To Message
+        $message .= "<a href='".route('members')."'>No</a>";
+        //add flash message on error
+        $request->session()->flash('message', $message);
+        //Return redirect
+        return redirect()->back();
     }
 
     /**
@@ -150,6 +222,8 @@ class MemberController extends Controller
     {
         //Remove member
         $this->userService->removeMember($this->society, $user);
+        if($request->session()->has('errors')) return \redirect()->back();
+        return \redirect()->route('members')->with("message", "Member Removed Successfully");
     }
 
     /**
@@ -163,12 +237,30 @@ class MemberController extends Controller
     }
 
     /**
+     * Confirm Role Delete
+     */
+    public function confirmRemoveRole(Role $role, Request $request){
+        //Construct message
+        $message = "Are you sure you want to remove? ";
+        //Add To Message
+        $message .= "<a href='".route('remove-role', ['role' => $role->id])."'>Yes</a> ";
+        //Add To Message
+        $message .= "<a href='".route('roles')."'>No</a>";
+        //add flash message on error
+        $request->session()->flash('message', $message);
+        //Return redirect
+        return redirect()->back();
+    }
+
+    /**
      * Remove Role
      */
-    public function removeRole(Role $role)
+    public function removeRole(Role $role, Request $request)
     {
         //Remove Role
         $this->userService->removeRole($this->society, $role);
+        if($request->session()->has('errors')) return \redirect()->back();
+        return \redirect()->route('roles')->with("message", "Role Removed Successfully");
     }
 
     /**
@@ -179,6 +271,7 @@ class MemberController extends Controller
     {
         //Get Member
         $member = $this->userService->getSingleMember($this->society, $member);
+        return view('dashboard.member.view-member', ['member' => $member]);
     }
 
     /**

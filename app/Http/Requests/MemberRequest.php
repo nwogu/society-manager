@@ -13,7 +13,7 @@ class MemberRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -31,29 +31,10 @@ class MemberRequest extends FormRequest
                     'firstname' => 'required|string|max:255',
                     'lastname' => 'required|string|max:255',
                     'role' => 'required|integer|exists:roles,id',
-                    'email' => 'required_if:phone,null|string|email|max:255|unique:users',
-                    'phone' => 'required_if:email,null|string|max:255|unique:users',
-                    'password' => 'string|min:6|confirmed',
-                    'address' => 'string',
-                    'dob' => 'date',
-                    'sex' => 'string',
-                    'joined' => 'date',
-                    'status' => 'boolean'
+                    'email' => 'required_without:phone|string|max:255',
                ];
-           case "PUT":
-               return [
-                    'firstname' => 'required|string|max:255',
-                    'lastname' => 'required|string|max:255',
-                    'role' => 'required|integer|exists:roles,id',
-                    'email' => 'required_if:phone,null|string|email|max:255|unique:users',
-                    'phone' => 'required_if:email,null|string|max:255|unique:users',
-                    'password' => 'string|min:6|confirmed',
-                    'address' => 'string',
-                    'dob' => 'date',
-                    'sex' => 'string',
-                    'joined' => 'date',
-                    'status' => 'boolean'
-               ];
+            default:
+            return [];
        }
     }
 }

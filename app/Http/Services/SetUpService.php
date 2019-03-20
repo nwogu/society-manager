@@ -44,6 +44,8 @@ class SetUpService
         $data['password'] = Hash::make($data['password']);
         //construct full name
         $data['fullname'] = $data['firstname'] . " " . $data['lastname'];
+        //check dob
+        if(isset($data['dob']) && $data['dob'] !== null) $data['dob'] = new \DateTime($data['dob']);
         //create user
         return User::create($data);
     }
@@ -121,7 +123,7 @@ class SetUpService
      * 
      * @return User $user
      */
-    public function addUserToSociety(User $user, Society $society, $role = Constants::DEFAULT_ROLE)
+    public function addUserToSociety(User $user, Society $society, $role = Constants::DEFAULT_ROLE, $joined = null)
     {
         //seed default roles
         $society = $this->seedDefaultSocietalRoles($society);
@@ -136,6 +138,10 @@ class SetUpService
         //attach user role
         $user->roles()->attach($role);
         //attach user society
+        if($joined)
+        {
+            $user = [$user->id => ['joined' => (new \DateTime($joined))]];
+        }
         $society->users()->attach($user);
         //return user
         return User::find($user);
@@ -202,6 +208,8 @@ class SetUpService
     {
         //set Society Name
         $data['name'] = $society->name;
+        //set society id
+        $data['id'] = $society->id;
         //Get Total Members
         $data['members'] = $society->users()->count() ?? 0;
         //Get Total Collections

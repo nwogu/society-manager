@@ -13,7 +13,7 @@ class RoleRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -31,10 +31,8 @@ class RoleRequest extends FormRequest
                     "role" => "required|string",
                     "executive" => "required|boolean"
                 ];
-            case "PUT":
+            default:
                 return [
-                    "role" => "string",
-                    "executive" => "boolean"
                 ];
         }
     }

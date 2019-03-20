@@ -17,7 +17,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="overview-wrap">
-                        <h2 class="title-1">Create Meeting</h2>
+                        <h2 class="title-1">Add Member</h2>
                     </div>
                 </div>
             </div>
@@ -77,71 +77,82 @@
                     </div>
                 </div>
             </div>
-            <form action="{{ route('create-meeting')}}" method="post" class="form-horizontal">
+            <form action="{{ route('add-member')}}" method="post" class="form-horizontal">
             @csrf
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <strong>Meeting Details</strong>
+                                <strong>Member Details</strong>
                             </div>
                             <div class="card-body card-block">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="inputIsValid" class=" form-control-label">Meeting Date</label>
-                                            <input type="date" id="campaignName" name="meeting_date" class=" form-control-success form-control" required>
+                                            <label for="inputIsValid" class=" form-control-label">First Name</label>
+                                            <input type="text" id="campaignName" name="firstname" class=" form-control-success form-control" value="{{ old('firstname') }}" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="inputIsInvalid" class=" form-control-label">Type</label>
-                                            <select type="text" id="frequency" name="type" class="form-control select2" required>
-                                            @foreach($types as $type)
-                                            <option value="{{ $type }}"> {{ $type }}</option>
+                                            <label for="inputIsInvalid" class=" form-control-label">Role</label>
+                                            <select type="text" id="frequency" name="role" class="form-control select2" required>
+                                            @foreach($roles as $role)
+                                            <option value="{{ $role->id }}"> {{ $role->role }}</option>
                                             @endforeach </select>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class=" form-group">
-                                            <label for="taget" class=" form-control-label">Presider</label>
-                                            <select type="text" id="target" name="presider" class="form-control select2" required>
-                                            @foreach($users as $user)
-                                            <option value="{{ $user->id }}"> {{ $user->firstname }} {{ $user->lastname }}</option>
-                                            @endforeach </select>
+                                        <div class="form-group">
+                                            <label for="inputIsValid" class=" form-control-label">Last Name</label>
+                                            <input type="text" id="campaignName" name="lastname" class=" form-control-success form-control" value="{{ old('lastname') }}" required>
                                         </div>
-                                        <div class=" form-group">
-                                            <label for="message" class="form-control-label">Attendees</label>
-                                            <select name="attendance[]" class="form-control select2" multiple="multiple" id="select2" required>
-                                            @foreach($users as $user)
-                                            <option value="{{ $user->id }}"> {{ $user->firstname }} {{ $user->lastname }}</option>
-                                            @endforeach </select>
+                                        <div class="form-group">
+                                            <label for="inputIsValid" class=" form-control-label">Email</label>
+                                            <input type="text" id="campaignName" name="email" class=" form-control-success form-control" value="{{ old('email') }}">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="inputIsValid" class=" form-control-label">Start Time</label>
-                                            <input type="time" id="campaignName" name="start_time" class=" form-control-success form-control" required>
+                                            <label for="inputIsValid" class=" form-control-label">Date of Birth</label>
+                                            <input type="date" id="campaignName" name="dob" class=" form-control-success form-control" value="{{ old('dob') }}">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="inputIsValid" class=" form-control-label">End Time</label>
-                                            <input type="time" id="campaignName" name="end_time" class=" form-control-success form-control" required>
+                                            <label for="inputIsValid" class=" form-control-label">Phone</label>
+                                            <input type="text" id="campaignName" name="phone" class=" form-control-success form-control" value="{{ old('phone') }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="inputIsInvalid" class=" form-control-label">Sex</label>
+                                            <select type="text" id="frequency" name="sex" class="form-control select2">
+                                            @foreach($sexes as $sex)
+                                            <option value="{{ $sex }}"> {{ $sex }}</option>
+                                            @endforeach </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="inputIsValid" class=" form-control-label">Date Joined</label>
+                                            <input type="date" name="joined" class=" form-control-success form-control" value="{{ old('joined') }}">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label for="body" class="control-label mb-1">Minutes</label>
-                                            <textarea id="editor1" name="minute" type="text" class="form-control" aria-required="fasle" aria-invalid="false"></textarea>
+                                            <label for="body" class="control-label mb-1">Address</label>
+                                            <textarea name="address" type="text" class="form-control" aria-required="fasle" aria-invalid="false">{{ old('address') }}</textarea>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <button type="submit" class="btn btn-primary">Create Meeting</button>
+                                <button type="submit" class="btn btn-primary">Add Member</button>
                             </div>
                         </div>
                     </div>

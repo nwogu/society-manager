@@ -17,7 +17,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="overview-wrap">
-                        <h2 class="title-1">Edit Meeting</h2>
+                        <h2 class="title-1">Edit Member</h2>
                     </div>
                 </div>
             </div>
@@ -77,100 +77,112 @@
                     </div>
                 </div>
             </div>
-            <form action="{{ route('edit-meeting', ['meeting' => $meeting->id])}}" method="post" class="form-horizontal">
+            <form action="{{ route('edit-member', ['member' => $user->id])}}" method="post" class="form-horizontal">
             @csrf
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <strong>Meeting Details</strong>
+                                <strong>Member Details</strong>
                             </div>
                             <div class="card-body card-block">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="inputIsValid" class=" form-control-label">Meeting Date</label>
-                                            <input type="date" id="campaignName" name="meeting_date" class=" form-control-success form-control" 
-                                            @if($meeting->meeting_date != null)
-                                            value="{{ date( 'Y-m-d', strtotime($meeting->meeting_date)) }}"
-                                            @endif
-                                            >
-                                            required>
+                                            <label for="inputIsValid" class=" form-control-label">First Name</label>
+                                            <input type="text" id="campaignName" name="firstname" class=" form-control-success form-control" value="{{$user->firstname}}" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="inputIsInvalid" class=" form-control-label">Type</label>
-                                            <select type="text" id="frequency" name="type" class="form-control select2" required>
-                                            @foreach($types as $type)
-                                            @if($type == $meeting->type)
-                                            <option value="{{ $type }}" selected> {{ $type }}</option>
+                                            <label for="inputIsInvalid" class=" form-control-label">Role</label>
+                                            <select type="text" id="frequency" name="role" class="form-control select2" required>
+                                            @foreach($roles as $role)
+                                            @if(($user->role($generalData['id']) ? $user->role($generalData['id'])->id : null) == $role->id)
+                                            <option value="{{ $role->id }}" selected> {{ $role->role }}</option>
                                             @else
-                                            <option value="{{ $type }}"> {{ $type }}</option>
+                                            <option value="{{ $role->id }}"> {{ $role->role }}</option>
                                             @endif
                                             @endforeach </select>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class=" form-group">
-                                            <label for="taget" class=" form-control-label">Presider</label>
-                                            <select type="text" id="target" name="presider" class="form-control select2" required>
-                                            @foreach($users as $user)
-                                            @if($user->id == $meeting->presider()->first()->id)
-                                            <option value="{{ $user->id }}" selected> {{ $user->firstname }} {{ $user->lastname }}</option>
-                                            @else
-                                            <option value="{{ $user->id }}"> {{ $user->firstname }} {{ $user->lastname }}</option>
-                                            @endif
-                                            @endforeach </select>
+                                        <div class="form-group">
+                                            <label for="inputIsValid" class=" form-control-label">Last Name</label>
+                                            <input type="text" id="campaignName" name="lastname" class=" form-control-success form-control" value="{{$user->lastname}}" required>
                                         </div>
-                                        <div class=" form-group">
-                                            <label for="message" class="form-control-label">Attendees</label>
-                                            <select name="attendance[]" class="form-control select2" multiple="multiple" id="select2" required>
-                                            @foreach($users as $user)
-                                            @if($meeting->attendances()->where('user_id', $user->id)->exists())
-                                            <option value="{{ $user->id }}" selected> {{ $user->firstname }} {{ $user->lastname }}</option>
-                                            @else
-                                            <option value="{{ $user->id }}"> {{ $user->firstname }} {{ $user->lastname }}</option>
-                                            @endif
-                                            @endforeach </select>
+                                        <div class="form-group">
+                                            <label for="inputIsValid" class=" form-control-label">Email</label>
+                                            <input type="text" id="campaignName" name="email" class=" form-control-success form-control" value="{{$user->email}}">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="inputIsValid" class=" form-control-label">Start Time</label>
-                                            <input type="time" id="campaignName" name="start_time" class=" form-control-success form-control" 
-                                            @if($meeting->start_time != null)
-                                            value="{{ date( 'H:i:s', strtotime($meeting->start_time)) }}"
-                                            @endif
-                                            >
-                                            required>
+                                            <label for="inputIsValid" class=" form-control-label">Password</label>
+                                            <input type="password" id="campaignName" name="password" class=" form-control-success form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="inputIsValid" class=" form-control-label">End Time</label>
-                                            <input type="time" id="campaignName" name="end_time" class=" form-control-success form-control" 
-                                            @if($meeting->end_time != null)
-                                            value="{{ date( 'H:i:s', strtotime($meeting->end_time)) }}"
+                                            <label for="inputIsValid" class=" form-control-label">Confirm Password</label>
+                                            <input type="password" id="campaignName" name="password_confirmation" class=" form-control-success form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="inputIsValid" class=" form-control-label">Date of Birth</label>
+                                            <input type="date" id="campaignName" name="dob" class=" form-control-success form-control" 
+                                            @if($user->dob != null)
+                                            value="{{ date( 'Y-m-d', strtotime($user->dob)) }}"
                                             @endif
                                             >
-                                            required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="inputIsValid" class=" form-control-label">Phone</label>
+                                            <input type="text" id="campaignName" name="phone" class=" form-control-success form-control" value="{{ $user->phone}}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="inputIsInvalid" class=" form-control-label">Sex</label>
+                                            <select type="text" id="frequency" name="sex" class="form-control select2">
+                                            @foreach($sexes as $sex)
+                                            @if($user->sex == $sex)
+                                            <option value="{{ $sex }}" selected> {{ $sex }}</option>
+                                            @else
+                                            <option value="{{ $sex }}"> {{ $sex }}</option>
+                                            @endif
+                                            @endforeach </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="inputIsValid" class=" form-control-label">Date Joined</label>
+                                            <input type="date" id="campaignName" name="joined" class=" form-control-success form-control" 
+                                            @if($user->pivot->joined != null)
+                                            value="{{ date( 'Y-m-d', strtotime($user->pivot->joined)) }}"
+                                            @endif
+                                            >
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label for="body" class="control-label mb-1">Minutes</label>
-                                            <textarea id="editor1" name="minute" type="text" class="form-control" aria-required="fasle" aria-invalid="false">
-                                            {!! $meeting->minute !!}
-                                            </textarea>
+                                            <label for="body" class="control-label mb-1">Address</label>
+                                            <textarea name="address" type="text" class="form-control" aria-required="fasle" aria-invalid="false">{{ $user->address }}</textarea>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <button type="submit" class="btn btn-primary">Update Meeting</button>
+                                <button type="submit" class="btn btn-primary">Update Member</button>
                             </div>
                         </div>
                     </div>

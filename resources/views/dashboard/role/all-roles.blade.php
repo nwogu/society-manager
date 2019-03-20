@@ -7,10 +7,10 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="overview-wrap">
-                                    <h2 class="title-1">Meetings</h2>
+                                    <h2 class="title-1">Roles</h2>
                                         <div class="overview-wrap">
-                                            <a class="au-btn au-btn-icon au-btn--blue btn-secondary" href="{{ route('show-create-meeting') }}">
-                                            <i class="zmdi zmdi-plus"></i>create meeting</a>
+                                            <a class="au-btn au-btn-icon au-btn--blue btn-secondary" href="{{ route('show-create-role') }}">
+                                            <i class="zmdi zmdi-plus"></i>create role</a>
                                         </div> 
                                 </div>
                             </div>
@@ -73,19 +73,13 @@
                         </div>
                         <div class="row">
                             <div class="col-lg-12">
-                                <h2 class="title-1 m-b-25">Meetings</h2>
+                                <h2 class="title-1 m-b-25">Roles</h2>
                                 <div class="table-responsive table--no-card m-b-40">
                                     <table class="table table-borderless table-striped table-earning">
                                         <thead>
                                             <tr>
-                                                <th>Date</th>
+                                                <th>Role</th>
                                                 <th>Type</th>
-                                                <th>Presider</th>
-                                                <th>Attendance</th>
-                                                <th>Duration</th>
-                                                <th>Total Reports</th>
-                                                <th>Matters Arising</th>
-                                                <th>Tasks</th>
                                                 <th class="text-right"></th>
                                                 <!-- <th class="text-right"></th>
                                                 <th class="text-right"></th> -->
@@ -93,45 +87,30 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                        @if (empty($meetingData))
+                                        @if (empty($roles))
                                             <tr>
-                                                <td>---</td>
-                                                <td>---</td>
-                                                <td>---</td>
-                                                <td>---</td>
-                                                <td>---</td>
-                                                <td>---</td>
                                                 <td>---</td>
                                                 <td>---</td>
                                                 <td class="text-right">---</td>
                                                 
                                             </tr>
                                         @else
-                                        @foreach ($meetingData as $meetingDetails)
+                                        @foreach ($roles as $role)
                                             <tr>
-                                                <td>
-                                                <a href="{{ route('get-meeting-details', ['meeting' => $meetingDetails['meeting']->id]) }}">
-                                                {{ date('l, d M Y', strtotime($meetingDetails['meeting']->meeting_date)) }} </a>
-                                                </td>
-                                                <td>{{ ucwords($meetingDetails['meeting']->type) }}</td>
-                                                <td>{{ $meetingDetails['meeting']->presider()->first()->firstname }} {{ $meetingDetails['meeting']->presider()->first()->lastname }} </td>
-                                                <td>{{ $meetingDetails['meeting']->total_attendance }}</td>
-                                                <td>{{ ceil((strtotime($meetingDetails['meeting']->end_time) - strtotime($meetingDetails['meeting']->start_time)) / (60 * 60 ))}} Hour(s)</td>
-                                                <td>{{ $meetingDetails['reports']['count'] }}</td>
-                                                <td>{{ $meetingDetails['matters']['count'] }}</td>
-                                                <td>{{ $meetingDetails['tasks']['count'] }}</td>
-                                                <!-- <td class="text-right"><a href="{{ route('get-meeting-details', ['id' => $meetingDetails['meeting']->id]) }}">details</a></td>
-                                                <td class="text-right"><a href="{{ route('get-meeting-details', ['id' => $meetingDetails['meeting']->id]) }}">download minutes</a></td>
-                                                <td class="text-right"><a href="{{ route('get-meeting-details', ['id' => $meetingDetails['meeting']->id]) }}">send minutes</a></td> -->
+                                                <td>{{ $role->role }}</td>
+                                                @if($role->executive)
+                                                <td>executive</td>
+                                                @else
+                                                <td>non - executive</td>
+                                                @endif
                                                 <td class="text-right">
                                                     <div class="dropdown">
                                                     <a class="btn btn-sm" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     ::
                                                     </a>
                                                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                                        <a class="dropdown-item" href="{{ route('get-meeting-details', ['meeting' => $meetingDetails['meeting']->id]) }}">details</a>
-                                                        <a class="dropdown-item" href="{{ route('download-minute', ['meeting' => $meetingDetails['meeting']->id]) }}">download minutes</a>
-                                                        <a class="dropdown-item" href="{{ route('send-minute-all', ['meeting' => $meetingDetails['meeting']->id]) }}">send minutes</a>
+                                                        <a class="dropdown-item" href="{{ route('show-edit-role', ['role' => $role->id]) }}">edit</a>
+                                                        <a class="dropdown-item" href="{{ route('confirm-remove-role', ['role' => $role->id]) }}">delete</a>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -139,7 +118,6 @@
                                             </tr>
                                         @endforeach
                                         @endif
-                                        {{ $links }}
                                         </tbody>
                                     </table>
                                 </div>

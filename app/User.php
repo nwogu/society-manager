@@ -6,8 +6,10 @@ use App\Role;
 use App\Task;
 use App\Matter;
 use App\Report;
+use App\Meeting;
 use App\Society;
 use App\Commitee;
+use App\Attendance;
 use App\Collection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -32,12 +34,29 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    protected $dates = ['dob'];
+
     /**
      * Get user roles
      */
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'user_role');
+    }
+
+    /**
+     * Get User Society Role
+     */
+    public function role(int $societyId)
+    {
+        return $this->roles()->where('society_id', $societyId)->first();
+    }
+
+    public function isExecutive(int $societyId)
+    {
+        $role = $this->role($societyId);
+        if($role !== null) return $role->executive;
+        return false;
     }
 
     /**
@@ -83,5 +102,18 @@ class User extends Authenticatable
     public function paidCollections()
     {
         return $this->hasMany(Collection::class, 'member');
+    }
+
+    //define attendance
+    public function attendances()
+    {
+        return $this->belongsToMany(Meeting::class, 'attendances')->using(Attendance::class);
+    }
+
+    public function lastMeeting(int $societyId)
+    {
+        $att = $this->attendances()->where('meetings.society_id', $societyId)->orderBy('meeting_date', 'desc')->get();
+        if ($att->isEmpty()) return null;
+        return $att[0]->meeting_date;
     }
 }

@@ -71,6 +71,7 @@ class LoginController extends Controller
 
             //log out
             Auth::logout();
+            return \redirect()->back()->withErrors("You are not a member of this society");
         }
 
     }

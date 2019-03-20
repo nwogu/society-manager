@@ -34,6 +34,10 @@
 
      const COLLECTION_EXPENSE_TYPE = "expense";
 
+     const MALE_SEX = "male";
+
+     const FEMALE_SEX = "female";
+
      const MEETING_TYPES = [
         self::MEETING_TYPE_GENERAL, 
         self::MEETING_TYPE_EXECUTIVE, 
@@ -58,7 +62,12 @@
         self::COLLECTION_EXPENSE_TYPE
     ];
 
-    const DEFAULT_LIMIT = 10;
+    const SEXES = [
+        self::MALE_SEX,
+        self::FEMALE_SEX
+    ];
+
+    const DEFAULT_LIMIT = 20;
 
     const DEFAULT_PASSWORD = "123456";
  }

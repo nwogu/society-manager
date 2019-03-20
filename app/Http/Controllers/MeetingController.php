@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Meeting;
 use App\Society;
 use App\Constants;
-use Barryvdh\DomPDF\PDF;
+use PDF;
 use Illuminate\Http\Request;
 use App\Http\Requests\MeetingRequest;
 use App\Http\Services\MeetingService;
@@ -53,7 +53,7 @@ class MeetingController extends Controller
         //Get meeting details
         $meetingDetails = $this->meetingService->getMeetingDetails($this->society, $meeting);
         //return
-        return view('dashboard.meeting.view-meeting', ['meeting' => $meetingDetails]);
+        return view('dashboard.meeting.view-meeting', ['meeting' => $meetingDetails, 'users' => $this->society->users]);
     }
 
     /**
@@ -284,7 +284,16 @@ class MeetingController extends Controller
     {
         $pdf = PDF::loadView('pdf.minutes', ['meeting' => $meeting]);
         $pdfName = substr($this->society->name, 0, 3) . "_" . time() . "." . 'pdf';
-        return $pdf->download($pdfName);
+        return $pdf->stream($pdfName);
+    }
+
+    /**
+     * Send Minutes Via Email
+     */
+    public function sendMinutesToAllMembers(Meeting $meeting)
+    {
+        $this->meetingService->sendMinutesToAllMembers($this->society, $meeting);
+        return \redirect()->back()->with("message", "Minutes Sent To All Members Succesfully");
     }
 
     /**

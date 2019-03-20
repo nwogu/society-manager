@@ -5,10 +5,13 @@
  */
 namespace App\Http\Services;
 
-use App\Constants;
+use PDF;
 use App\Meeting;
 use App\Society;
+use App\Constants;
 use App\Attendance;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class MeetingService
 {
@@ -486,7 +489,7 @@ class MeetingService
         $meeting = $society->meetings()->where('id', $meeting->id)->first();
         if ($meeting == null) throw new \Exception("Meeting not found in this society");
         //hold attendance
-        $attendances = isset($data['attedance']) ? (empty($data['attendance']) ? null : $data['attendance']) : false;
+        $attendances = isset($data['attendance']) ? (empty($data['attendance']) ? null : $data['attendance']) : false;
         //check attendance
         if ($attendances === null) 
         {
@@ -566,5 +569,30 @@ class MeetingService
         $matter = $society->matters()->where('id', $matter->id)->first();
         if ($matter == null) throw new \Exception("Matter not found for this society");
         return $matter->delete();
+    }
+
+    /**
+     * Send Minutes Via Email
+     */
+    public function sendMinutesToAllMembers(Society $society, $meeting)
+    {
+        $pdf = PDF::loadView('pdf.minutes', ['meeting' => $meeting]);
+        $pdfName = substr($society->name, 0, 3) . "_" . time() . "." . 'pdf';
+        $path = storage_path() . "/". $pdfName;
+        $pdf->save($path);
+        foreach($societ->users as $user)
+        {
+            if($user->email == null)continue;
+            Mail::send('mail.send', ['meeting' => $meeting, 'content' => 'Kindly find attached, the minute of the above dated meeting'], function ($message) use($path, $society, $user)
+            {
+                $message->subject("Minutes Of Meeting -". $society->name);
+                $message->from((Auth::user())->email, (Auth::user())->firstname . " " . (Auth::user())->lastname);
+                $message->to($user->email);
+                $message->attach($path);
+    
+            });
+        }
+        unlink($path);
+        return true;
     }
 }
