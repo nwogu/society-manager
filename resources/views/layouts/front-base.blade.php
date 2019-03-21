@@ -8,7 +8,7 @@
   <meta name="author" content="Society Manager">
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
-  <title>{{ config('app.name', 'Society Manager') }} - @yield('title')</title>
+  <title>Society Manager - @yield('title')</title>
   <!-- Favicon -->
   <link href="../assets/img/brand/favicon.png" rel="icon" type="image/png">
   <!-- Fonts -->

@@ -1,6 +1,6 @@
 @extends('layouts.front-base')
 
-@section('title', 'Society Manager')
+@section('title', 'Front')
 
 @section('content')
     <!-- Header -->
