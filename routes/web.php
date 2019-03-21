@@ -27,15 +27,18 @@ Route::group(['middleware' => ['web', 'app_auth']], function()
         Route::get('/get-meeting-details/{meeting}', 'MeetingController@getMeetingDetails')->name('get-meeting-details');
         Route::get('/get-society-reports', 'MeetingController@getSocietyReports')->name('get-society-reports');
         Route::get('/get-society-matters', 'MeetingController@getSocietyMatters')->name('get-society-matters');
+        Route::get('/show-create-matters', 'MeetingController@displayMatterForm')->name('show-create-matters');
         Route::get('/get-society-tasks', 'MeetingController@getSocietyTasks')->name('get-society-tasks');
         Route::get('/get-single-report', 'MeetingController@getSingleReport')->name('get-single-report');
-        Route::get('/get-single-matter', 'MeetingController@getSingleMatter')->name('get-single-matter');
+        Route::get('/get-single-matter/{matter}', 'MeetingController@getSingleMatter')->name('get-single-matter');
+        Route::post('/add-matter-to-meeting/{matter}', 'MeetingController@addMatterToMeeting')->name('add-matter-to-meeting');
         Route::get('/get-single-task', 'MeetingController@getSingleTask')->name('get-single-task');
         Route::get('/toggle-task-status/{task}', 'MeetingController@toggleTaskStatus')->name('toggle-task-status');
         Route::get('/toggle-matter-status/{matter}', 'MeetingController@toggleMatterStatus')->name('toggle-matter-status');
         Route::put('/edit-report/{report}', 'MeetingController@editReport')->name('edit-report');
         Route::put('/edit-task/{task}', 'MeetingController@editTask')->name('edit-task');
-        Route::put('/edit-matter/{matter}', 'MeetingController@editMatter')->name('edit-matter');
+        Route::post('/edit-matter/{matter}', 'MeetingController@editMatter')->name('edit-matter');
+        Route::get('/show-edit-matter/{matter}', 'MeetingController@displayEditMatterForm')->name('show-edit-matter');
         Route::post('/edit-meeting/{meeting}', 'MeetingController@editMeeting')->name('edit-meeting');
         Route::get('/edit-meeting/{meeting}', 'MeetingController@displayEditMeetingForm')->name('show-edit-meeting');
         Route::post('/create-report', 'MeetingController@createReport')->name('create-report');
@@ -43,12 +46,14 @@ Route::group(['middleware' => ['web', 'app_auth']], function()
         Route::post('/create-matter', 'MeetingController@createMatter')->name('create-matter');
         Route::post('/create-meeting', 'MeetingController@createMeeting')->name('create-meeting');
         Route::get('/create-meeting', 'MeetingController@displayMeetingForm')->name('show-create-meeting');
-        Route::delete('/delete-matter/{matter}', 'MeetingController@deleteMatter')->name('delete-matter');
+        Route::get('/delete-matter/{matter}', 'MeetingController@deleteMatter')->name('delete-matter');
+        Route::get('/confirm-delete-matter/{matter}', 'MeetingController@confirmDeleteMatter')->name('confirm-remove-matter');
         Route::delete('/delete-task/{task}', 'MeetingController@deleteTask')->name('delete-task');
         Route::delete('/delete-report/{report}', 'MeetingController@deleteReport')->name('delete-report');
         Route::get('/delete-meeting/{meeting}', 'MeetingController@deleteMeeting')->name('delete-meeting');
         Route::get('/download-minute/{meeting}', 'MeetingController@downloadMinute')->name('download-minute');
         Route::get('/send-minute-all/{meeting}', 'MeetingController@sendMinutesToAllMembers')->name('send-minute-all');
+        Route::post('/send-minute-persons/{meeting}', 'MeetingController@sendMinutesToPersons')->name('send-minute-persons');
         Route::get('/confirm-delete-meeting/{meeting}', 'MeetingController@confirmDeleteMeeting')->name('confirm-delete-meeting');
     });
 

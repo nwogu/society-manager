@@ -7,7 +7,11 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="overview-wrap">
-                                    <h2 class="title-1">{{ $meeting['meeting']->name }}</h2>
+                                    <h2 class="title-1">Matters</h2>
+                                        <div class="overview-wrap">
+                                            <a class="au-btn au-btn-icon au-btn--blue btn-secondary" href="{{ route('show-create-matters') }}">
+                                            <i class="zmdi zmdi-plus"></i>create new matter</a>
+                                        </div> 
                                 </div>
                             </div>
                         </div>
@@ -67,57 +71,74 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="row">
-                            <div class="col-md-12">
+                        @if (!$matters->isEmpty())
+                        @foreach ($matters as $matter)
+                            <div class="col-md-4">
                                 <div class="card">
                                     <div class="card-header">
-                                        <div class="float-left">
-                                        {{$meeting['meeting']->name}} <br><b>start time:</b> {{date( 'h:i a', strtotime($meeting['meeting']->start_time))}} <br><b>end time:</b> {{date( 'h:i a', strtotime($meeting['meeting']->end_time))}}
-                                        </div>
-                                        <div class="float-right">
-                                            <!-- <a href="{{ route('show-edit-meeting', ['meeting' => $meeting['meeting']->id])}}" class="btn btn-primary btn-sm">edit</a>
-                                            <a href="{{ route('confirm-delete-meeting', ['meeting' => $meeting['meeting']->id])}}" class="btn btn-primary btn-sm">delete</a> -->
-                                                <div class="dropdown">
-                                                <a class="btn btn-sm" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                more
-                                                </a>
-                                                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                                    <a class="dropdown-item" href="{{ route('show-edit-meeting', ['meeting' => $meeting['meeting']->id]) }}">edit</a>
-                                                    <a class="dropdown-item" href="{{ route('confirm-delete-meeting', ['meeting' => $meeting['meeting']->id]) }}">delete</a>
-                                                    <a class="dropdown-item" href="{{ route('download-minute', ['meeting' => $meeting['meeting']->id]) }}">download minutes</a>
-                                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#sendPersons">send minute to persons</a>
-                                                    </div>
-                                                </div>
-                                        </div>
+                                        <strong class="card-title mb-3">
+                                        <a href="{{ route('get-single-matter', ['matter' => $matter->id])}}">
+                                        View Details
+                                        </a>
+                                        </strong>
+                                        <small>
+                                                <span class="badge 
+                                                {{ $matter->status == 'resolved' ? 'badge-success' : ($matter->status == 'arising' ? 'badge-danger' : 'badge-primary') }} 
+                                                float-right mt-1">{{$matter->status}}</span>
+                                            </small>
                                     </div>
                                     <div class="card-body">
                                         <div class="mx-auto d-block">
-                                            <h5 class="text-sm mt-2 mb-1"></h5>
-                                            <div class="location ">
-                                                <h5>Minutes</h5>
-                                                {!!$meeting['meeting']->minute!!}
-                                            </div>
-                                            <hr>
-                                            <div class="location ">
-                                                <h5>Attendance</h5>
-                                                @foreach($meeting['meeting']->attendances as $attendant)
-                                                {{ $attendant->firstname}} {{ $attendant->lastname}}, 
-                                                @endforeach
-                                            </div>
-                                            <hr>
-                                            <div class="location ">
-                                                <h5>Matters Arising</h5>
-                                                @foreach($meeting['meeting']->matters as $matter)
-                                                <a href="{{ route('get-single-matter', ['matter' => $matter->id])}}" style="padding-right:20px"> {{ $matter->matter}} </a>
-                                                @endforeach
+                                            <h5 class="text-sm-center mt-2 mb-1">{{$matter->matter}}</h5>
+                                            <h5 class="text-sm-center mt-2 mb-1">
+                                            @if($matter->raised_by != null)
+                                            Raised By: <br>
+                                            {{ $matter->raisedBy->firstname }} {{ $matter->raisedBy->lastname }}</h5>
+                                            @endif
+                                            <div class="location text-sm-center">
+                                                Treated in {{$matter->meetings()->count() ?? 0}} Meeting(s)</div>
+                                        </div>
+                                        <hr>
+                                        <div class="card-text text-sm-center">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <a href="#" class="btn btn-success btn-sm" data-target="#addMeetings" data-toggle="modal">
+                                                        Add To Meeting
+                                                    </a>
+                                                </div>
+                                                <div class="col-6">
+                                                    <a href="{{ route('toggle-matter-status', ['matter' => $matter->id])}}" class="btn btn-primary btn-sm">
+                                                        Toggle Status
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        @endforeach
+                        @else
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mx-auto d-block">
+                                            <h5 class="text-sm-center mt-2 mb-1"></h5>
+                                            <div class="location text-sm-center">
+                                                No Matters Created</div>
+                                        </div>
+                                        <hr>
+                                        <div class="card-text text-sm-center">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                         </div>
-                            
+                            {{$matters->links()}}
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="copyright">
@@ -129,29 +150,29 @@
                 </div>
 
                 <!-- modal scroll -->
-			<div class="modal fade" id="sendPersons" tabindex="-1" role="dialog" aria-labelledby="sendPersonsmodalLabel" aria-hidden="true">
+			<div class="modal fade" id="addMeetings" tabindex="-1" role="dialog" aria-labelledby="addMeetingsmodalLabel" aria-hidden="true">
 				<div class="modal-dialog modal-md" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 class="modal-title" id="scrollmodalLabel">Send Minutes</h5>
+							<h5 class="modal-title" id="scrollmodalLabel">Add To Meeting</h5>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 								<span aria-hidden="true">&times;</span>
 							</button>
 						</div>
 						<div class="modal-body">
-							<form action="{{ route('send-minute-persons', ['meeting' => $meeting['meeting']->id]) }}" method="POST">
+							<form action="{{ route('add-matter-to-meeting', ['matter' => $matter->id]) }}" method="POST">
                                 @csrf
                                 <div class="form-group">
-                                <label for="message" class="form-control-label">Members</label>
-                                <select name="members[]" class="form-control select2" multiple="multiple" id="select2">
-                                @foreach($users as $user)
-                                <option value="{{ $user->id }}"> {{ $user->firstname }} {{ $user->lastname }}</option>
+                                <label for="message" class="form-control-label">Meetings</label>
+                                <select name="meetings[]" class="form-control select2" multiple="multiple" id="select2">
+                                @foreach($meetings as $meeting)
+                                <option value="{{ $meeting->id }}"> {{ $meeting->name }}</option>
                                 @endforeach </select>
                                 </div>
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-							<button type="submit" class="btn btn-primary">Send Minutes</button>
+							<button type="submit" class="btn btn-primary">Add Meetings</button>
 						</div>
                         </form>
 					</div>
@@ -159,7 +180,6 @@
 			</div>
 			<!-- end modal scroll -->
                 @endsection
-
 @section('javascript')
 <script type="text/javascript">
     $(document).ready(function() {

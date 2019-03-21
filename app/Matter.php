@@ -17,9 +17,9 @@ class Matter extends Model
     }
 
     //define meeting
-    public function reportedDuring()
+    public function meetings()
     {
-        return $this->belongsTo(Meeting::class);
+        return $this->belongsToMany(Meeting::class);
     }
 
     //define society

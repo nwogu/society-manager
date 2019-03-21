@@ -35,7 +35,7 @@ class Meeting extends Model
     //define matters
     public function matters()
     {
-        return $this->hasMany(Matter::class);
+        return $this->belongsToMany(Matter::class);
     }
 
     //define tasks

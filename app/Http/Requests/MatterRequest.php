@@ -14,7 +14,7 @@ class MatterRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,18 +24,18 @@ class MatterRequest extends FormRequest
      */
     public function rules()
     {
+        $status = Constants::MATTERS_STATUS;
+        $status = implode(',', $status);
         //switch method
         switch($this->method())
         {
             case "POST":
-            case "PUT":
                 return [
                     "matter" => "required|string",
-                    "status" => "required|string|in:" . Constants::MATTERS_STATUS,
-                    "meeting_id" => "integer|exists:meetings,id",
-                    "raised_by" => "integer|exists:in,users,id",
-                    "details" => "string"
+                    "status" => "required|string|in:{$status}"
             ];
+            default:
+            return [];
         }
     }
 }

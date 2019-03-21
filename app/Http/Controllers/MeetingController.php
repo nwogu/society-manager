@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use PDF;
+use App\Matter;
 use App\Meeting;
 use App\Society;
 use App\Constants;
-use PDF;
 use Illuminate\Http\Request;
+use App\Http\Requests\MatterRequest;
 use App\Http\Requests\MeetingRequest;
 use App\Http\Services\MeetingService;
 
@@ -73,7 +75,23 @@ class MeetingController extends Controller
     public function getSocietyMatters()
     {
         //Get Society Matters
-        $societyReports = $this->meetingService->getSocietyMatters($this->society);
+        $societyMatters = $this->meetingService->getSocietyMatters($this->society);
+        return view('dashboard.matter.all-matters', [
+            'matters' => $societyMatters, 
+            'meetings' => $this->society->meetings
+            ]);
+        
+    }
+
+    /**
+     * Show matters
+     */
+    public function displayMatterForm()
+    {
+        return view('dashboard.matter.create-matter', [
+            'statuses' => Constants::MATTERS_STATUS,
+            'members' => $this->society->users
+            ]);
     }
 
     /**
@@ -105,6 +123,7 @@ class MeetingController extends Controller
         //Get Single Matter
         $matter = $this->meetingService->getSingleMatter($this->society, $matter);
         //return to array
+        return view('dashboard.matter.view-matter', ['matter' => $matter]);
     }
 
     /**
@@ -136,8 +155,15 @@ class MeetingController extends Controller
     public function toggleMatterStatus(Matter $matter)
     {
         //Toggle Matter Status
-        $matter = $this->meetingService->toggleMatterStatus($this->society, $matter);
+        $this->meetingService->toggleMatterStatus($this->society, $matter);
         //return to Array
+        return \redirect()->back()->with("message", "Status Updated");
+    }
+
+    public function addMatterToMeeting(Request $request, Matter $matter)
+    {
+        $this->meetingService->addMatterToMeeting($this->society, $request->all(), $matter);
+        return \redirect()->back()->with("message", "Matter Added To Meetings");
     }
 
     /**
@@ -162,12 +188,27 @@ class MeetingController extends Controller
 
     /**
      * Edit Matter
+     */
+    public function displayEditMatterForm(Matter $matter)
+    {
+        return view('dashboard.matter.edit-matter', [
+            'statuses' => Constants::MATTERS_STATUS,
+            'members' => $this->society->users,
+            'meetings' => $this->society->meetings,
+            'matter' => $matter
+            ]);
+    }
+
+    /**
+     * Edit Matter
      * @return Response
      */
     public function editMatter(Matter $matter, MatterRequest $request)
     {
         //Edit Matter
-        $matter = $this->meetingService->editMatter($this->society, $matter, $request->validated());
+        $matter = $this->meetingService->editMatter($this->society, $matter, $request->all());
+        if($request->session()->has("errors")) return \redirect()->back();
+        return \redirect()->route('get-society-matters')->with("message", "Matter Updated Successfully");
     }
 
     /**
@@ -225,7 +266,8 @@ class MeetingController extends Controller
     public function createMatter(MatterRequest $request)
     {
         //Create Matter
-        $matter = $this->meetingService->createMatter($this->society, $request->validated());
+        $matter = $this->meetingService->createMatter($this->society, $request->all());
+        return \redirect()->route('get-society-matters')->with("message", "Matter Created Successfully");
     }
 
     /**
@@ -297,6 +339,15 @@ class MeetingController extends Controller
     }
 
     /**
+     * Send Minutes Via Email
+     */
+    public function sendMinutesToPersons(Meeting $meeting, Request $request)
+    {
+        $this->meetingService->sendMinutesToPersons($this->society, $meeting, $request->all());
+        return \redirect()->back()->with("message", "Minutes Sent Succesfully");
+    }
+
+    /**
      * Delete Report
      * @return Response
      */
@@ -317,6 +368,22 @@ class MeetingController extends Controller
     }
 
     /**
+     * Confirm Matter Delete
+     */
+    public function confirmDeleteMatter(Matter $matter, Request $request){
+        //Construct message
+        $message = "Are you sure you want to delete? ";
+        //Add To Message
+        $message .= "<a href='".route('delete-matter', ['matter' => $matter->id])."'>Yes</a> ";
+        //Add To Message
+        $message .= "<a href='".route('get-society-matters')."'>No</a>";
+        //add flash message on error
+        $request->session()->flash('message', $message);
+        //Return redirect
+        return redirect()->back();
+    }
+
+    /**
      * Delete Matter
      * @return Response
      */
@@ -324,5 +391,6 @@ class MeetingController extends Controller
     {
         //Delete Matter
         $this->meetingService->deleteMatter($this->society, $matter);
+        return \redirect()->route("get-society-matters")->with("message", "Matter Removed Successfully");
     }
 }

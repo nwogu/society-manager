@@ -83,9 +83,9 @@
                                                 <th>Presider</th>
                                                 <th>Attendance</th>
                                                 <th>Duration</th>
-                                                <th>Total Reports</th>
+                                                <!-- <th>Total Reports</th> -->
                                                 <th>Matters Arising</th>
-                                                <th>Tasks</th>
+                                                <!-- <th>Tasks</th> -->
                                                 <th class="text-right"></th>
                                                 <!-- <th class="text-right"></th>
                                                 <th class="text-right"></th> -->
@@ -101,8 +101,8 @@
                                                 <td>---</td>
                                                 <td>---</td>
                                                 <td>---</td>
-                                                <td>---</td>
-                                                <td>---</td>
+                                                <!-- <td>---</td>
+                                                <td>---</td> -->
                                                 <td class="text-right">---</td>
                                                 
                                             </tr>
@@ -117,9 +117,9 @@
                                                 <td>{{ $meetingDetails['meeting']->presider()->first()->firstname }} {{ $meetingDetails['meeting']->presider()->first()->lastname }} </td>
                                                 <td>{{ $meetingDetails['meeting']->total_attendance }}</td>
                                                 <td>{{ ceil((strtotime($meetingDetails['meeting']->end_time) - strtotime($meetingDetails['meeting']->start_time)) / (60 * 60 ))}} Hour(s)</td>
-                                                <td>{{ $meetingDetails['reports']['count'] }}</td>
+                                                <!-- <td>{{ $meetingDetails['reports']['count'] }}</td> -->
                                                 <td>{{ $meetingDetails['matters']['count'] }}</td>
-                                                <td>{{ $meetingDetails['tasks']['count'] }}</td>
+                                                <!-- <td>{{ $meetingDetails['tasks']['count'] }}</td> -->
                                                 <!-- <td class="text-right"><a href="{{ route('get-meeting-details', ['id' => $meetingDetails['meeting']->id]) }}">details</a></td>
                                                 <td class="text-right"><a href="{{ route('get-meeting-details', ['id' => $meetingDetails['meeting']->id]) }}">download minutes</a></td>
                                                 <td class="text-right"><a href="{{ route('get-meeting-details', ['id' => $meetingDetails['meeting']->id]) }}">send minutes</a></td> -->
@@ -130,8 +130,8 @@
                                                     </a>
                                                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                                         <a class="dropdown-item" href="{{ route('get-meeting-details', ['meeting' => $meetingDetails['meeting']->id]) }}">details</a>
-                                                        <a class="dropdown-item" href="{{ route('download-minute', ['meeting' => $meetingDetails['meeting']->id]) }}">download minutes</a>
-                                                        <a class="dropdown-item" href="{{ route('send-minute-all', ['meeting' => $meetingDetails['meeting']->id]) }}">send minutes</a>
+                                                        <a class="dropdown-item" href="{{ route('download-minute', ['meeting' => $meetingDetails['meeting']->id]) }}">view/download minutes</a>
+                                                        <a class="dropdown-item" href="{{ route('send-minute-all', ['meeting' => $meetingDetails['meeting']->id]) }}">send minutes to all</a>
                                                         </div>
                                                     </div>
                                                 </td>

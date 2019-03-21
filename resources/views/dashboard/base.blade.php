@@ -77,7 +77,7 @@
                                     <a href="{{ route('get-society-matters') }}">Matters</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('get-society-tasks') }}">Tasks</a>
+                                    <a href="#">Tasks</a>
                                 </li>
                             </ul>
                         </li>
@@ -122,6 +122,22 @@
                                 </li>
                                 <li>
                                     <a href="#">Expenses</a>
+                                </li>
+                            </ul>
+                        </li>
+                        @if (Route::currentRouteName() == 'upcoming-events')
+                        <li class="active has-sub">
+                        @else
+                        <li class="has-sub">
+                        @endif
+                        <a class="js-arrow" href="#">
+                                <i class="fas fa-calendar"></i>Events</a>
+                            <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
+                                <li>
+                                    <a href="#">Up-Coming Events</a>
+                                </li>
+                                <li>
+                                    <a href="#">Event Reminders</a>
                                 </li>
                             </ul>
                         </li>
@@ -158,7 +174,7 @@
                                     <a href="{{ route('get-society-matters') }}">Matters</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('get-society-tasks') }}">Tasks</a>
+                                    <a href="#">Tasks</a>
                                 </li>
                             </ul>
                         </li>
@@ -206,6 +222,22 @@
                                 </li>
                             </ul>
                         </li>
+                        @if (Route::currentRouteName() == 'upcoming-events')
+                        <li class="active has-sub">
+                        @else
+                        <li class="has-sub">
+                        @endif
+                        <a class="js-arrow" href="#">
+                                <i class="fas fa-calendar"></i>Events</a>
+                            <ul class="list-unstyled navbar__sub-list js-sub-list">
+                                <li>
+                                    <a href="#">Up-Coming Events</a>
+                                </li>
+                                <li>
+                                    <a href="#">Event Reminders</a>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </nav>
             </div>
@@ -221,7 +253,7 @@
                         <div class="header-wrap">
                             <form class="form-header" action="#" method="POST">
                                 <input class="au-input au-input--xl" type="text" name="search" placeholder="Search ..." />
-                                <button class="au-btn--submit" type="submit">
+                                <button class="au-btn--submit" type="button">
                                     <i class="zmdi zmdi-search"></i>
                                 </button>
                             </form>

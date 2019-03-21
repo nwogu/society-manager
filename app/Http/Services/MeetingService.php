@@ -6,6 +6,7 @@
 namespace App\Http\Services;
 
 use PDF;
+use App\Matter;
 use App\Meeting;
 use App\Society;
 use App\Constants;
@@ -126,15 +127,10 @@ class MeetingService
     public function getMattersArising($society, Meeting $meeting)
     {
         //get matters arising
-        $matters = $society->matters()->where('meeting_id', $meeting->id)->get();
+        $matters = $meeting->matters()->get();
         //hold count
-        $mattersCount = 0;
-        //loop through each matters
-        foreach($matters as $matter)
-        {
-            //count matters
-            $mattersCount++;
-        }
+        $mattersCount = $meeting->matters()->count() ?? 0;
+        //return data
         return array('count' => $mattersCount, 'matters' => $matters);
     }
 
@@ -169,8 +165,6 @@ class MeetingService
      */
     public function createMatter($society, $data)
     {
-        //get society
-        $society = Society::find($society);
         //add society to matter
         $data['society_id'] = $society->id;
         //return matter
@@ -221,13 +215,13 @@ class MeetingService
         {
             case Constants::REPORTER_COMMITEE_TYPE:
                 $commitee = $cociety->commitees()->where('commitee_id', $data['reporter_id'])->first();
-                if($commitee == null) throw new \Exception("Commitee not found for this society");
+                if($commitee == null) return \redirect()->back()->withErrors("Commitee not found for this society");
                 return $commitee->reports()->create([
                     $data
                 ]);
             case Constants::REPORTER_MEMBER_TYPE:
                 $member = $society->users()->where('user_id', $data['reporter_id'])->first();
-                if($member == null) throw new \Exception("Member not found for this society");
+                if($member == null) return \redirect()->back()->withErrors("Member not found for this society");
                 return $member->reports()->create([
                     $data
                 ]);
@@ -265,7 +259,7 @@ class MeetingService
         //get society meeting
         $societyMeeting = $society->meetings()->where("id", $meeting->id)->first();
         //check society meeting
-        if ($societyMeeting == null) throw new \Exception("Meeting not found for this society");
+        if ($societyMeeting == null) return \redirect()->back()->withErrors("Meeting not found for this society");
         //return meeting details
         return array(
             'meeting' => $societyMeeting,
@@ -315,7 +309,7 @@ class MeetingService
         //Get report
         $report = $society->reports()->where('id', $report->id)->first();
         //check report
-        if($report == null) throw new \Exception("Report not found in this society.");
+        if($report == null) return \redirect()->back()->withErrors("Report not found in this society.");
         //return response
         return $report;
     }
@@ -330,7 +324,7 @@ class MeetingService
         //Get matter
         $matter = $society->matters()->where('id', $matter->id)->first();
         //check matter
-        if($matter == null) throw new \Exception("Matter not found in this society.");
+        if($matter == null) return \redirect()->back()->withErrors("Matter not found in this society.");
         //return response
         return $matter;
     }
@@ -345,7 +339,7 @@ class MeetingService
         //Get task
         $task = $society->tasks()->where('id', $task->id)->first();
         //check task
-        if($task == null) throw new \Exception("Task not found in this society.");
+        if($task == null) return \redirect()->back()->withErrors("Task not found in this society.");
         //return response
         return $task;
     }
@@ -362,7 +356,7 @@ class MeetingService
         //Get task
         $task = $society->tasks()->where('id', $task->id)->first();
         //check task
-        if($task == null) throw new \Exception("Task not found in this society.");
+        if($task == null) return \redirect()->back()->withErrors("Task not found in this society.");
         //update status
         $task->status = $task->status ? false : true;  
         //save
@@ -383,7 +377,7 @@ class MeetingService
         //Get matter
         $matter = $society->matters()->where('id', $matter->id)->first();
         //check matter
-        if($matter == null) throw new \Exception("Matter not found in this society.");
+        if($matter == null) return \redirect()->back()->withErrors("Matter not found in this society.");
         //hold status
         $status = $matter->status;
         //switch status
@@ -404,6 +398,20 @@ class MeetingService
         return $matter; 
     }
 
+    public function addMatterToMeeting($society, $data, $matter)
+    {
+        if(!empty($data['meetings'])){
+            $matter = $society->matters()->where('id', $matter->id)->first();
+            foreach($matter->meetings as $meeting){
+                if(in_array($meeting->id, $data['meetings'])){
+                    $meetingKey = array_search($meeting->id, $data['meetings']);
+                    unset($data['meetings'][$meetingKey]);
+                }
+            }
+            return $matter->meetings()->attach($data['meetings']);
+        }
+    }
+
     /**
      * Edit Report
      * @param Society
@@ -417,18 +425,18 @@ class MeetingService
         //Get Society Report
         $report = $society->reports()->where('id', $report->id)->first();
         //check report
-        if ($report == null) throw new \Exception("This report is not found in this society");
+        if ($report == null) return \redirect()->back()->withErrors("This report is not found in this society");
         //parse report owner
         switch($data['reporter_type'])
         {
             case Constants::REPORTER_COMMITEE_TYPE:
                 $commitee = $cociety->commitees()->where('commitee_id', $data['reporter_id'])->first();
-                if($commitee == null) throw new \Exception("Commitee not found for this society");
+                if($commitee == null) return \redirect()->back()->withErrors("Commitee not found for this society");
                 $report->reportable()->create($commitee);
                 break;
             case Constants::REPORTER_MEMBER_TYPE:
                 $member = $society->users()->where('user_id', $data['reporter_id'])->first();
-                if($member == null) throw new \Exception("Member not found for this society");
+                if($member == null) return \redirect()->back()->withErrors("Member not found for this society");
                 $report->reportable()->create($member);
         }
         $report->meeting_id = $data['meeting_id'] ?? null;
@@ -449,7 +457,7 @@ class MeetingService
     {
         //Get Task
         $task = $society->tasks()->where('id', $task->id)->first();
-        if ($task == null) throw new \Exception("This task is not found in this soiety");
+        if ($task == null) return \redirect()->back()->withErrors("This task is not found in this soiety");
         //update task
         $task->update($data);
         //return task
@@ -468,7 +476,12 @@ class MeetingService
     {
         //Get Matter
         $matter = $society->matters()->where('id', $matter->id)->first();
-        if ($matter == null) throw new \Exception("This matter is not found in this soiety");
+        if ($matter == null) return \redirect()->back()->withErrors("This matter is not found in this soiety");
+        if(!empty($data['meetings']))
+        {
+            $matter->meetings()->sync($data['meetings']);
+            unset($data['meetings']);
+        }
         //update matter
         $matter->update($data);
         //return matter
@@ -487,7 +500,7 @@ class MeetingService
     {
         //get society meeting
         $meeting = $society->meetings()->where('id', $meeting->id)->first();
-        if ($meeting == null) throw new \Exception("Meeting not found in this society");
+        if ($meeting == null) return \redirect()->back()->withErrors("Meeting not found in this society");
         //hold attendance
         $attendances = isset($data['attendance']) ? (empty($data['attendance']) ? null : $data['attendance']) : false;
         //check attendance
@@ -525,7 +538,7 @@ class MeetingService
     public function deleteMeeting(Society $society, Meeting $meeting)
     {
         $meeting = $society->meetings()->where('id', $meeting->id)->first();
-        if ($meeting == null) throw new \Exception("Meting not found for this society");
+        if ($meeting == null) return \redirect()->back()->withErrors("Meting not found for this society");
         return $meeting->delete();
     }
 
@@ -539,7 +552,7 @@ class MeetingService
     public function deleteReport(Society $society, Report $report)
     {
         $report = $society->reports()->where('id', $report->id)->first();
-        if ($report == null) throw new \Exception("Report not found for this society");
+        if ($report == null) return \redirect()->back()->withErrors("Report not found for this society");
         return $report->delete();
     }
 
@@ -553,7 +566,7 @@ class MeetingService
     public function deleteTask(Society $society, Task $task)
     {
         $task = $society->tasks()->where('id', $task->id)->first();
-        if ($task == null) throw new \Exception("Task not found for this society");
+        if ($task == null) return \redirect()->back()->withErrors("Task not found for this society");
         return $task->delete();
     }
 
@@ -567,7 +580,7 @@ class MeetingService
     public function deleteMatter(Society $society, Matter $matter)
     {
         $matter = $society->matters()->where('id', $matter->id)->first();
-        if ($matter == null) throw new \Exception("Matter not found for this society");
+        if ($matter == null) return \redirect()->back()->withErrors("Matter not found for this society");
         return $matter->delete();
     }
 
@@ -591,6 +604,34 @@ class MeetingService
                 $message->attach($path);
     
             });
+        }
+        unlink($path);
+        return true;
+    }
+
+    /**
+     * Send Minutes Via Email
+     */
+    public function sendMinutesToPersons(Society $society, $meeting, $data)
+    {
+        $pdf = PDF::loadView('pdf.minutes', ['meeting' => $meeting]);
+        $pdfName = substr($society->name, 0, 3) . "_" . time() . "." . 'pdf';
+        $path = storage_path() . "/". $pdfName;
+        if(empty($data['members'])) return;
+        $pdf->save($path);
+        foreach($data['members'] as $user)
+        {
+            $user = $society->users()->where('user_id', $user)->first();
+            if($user == null)continue;
+                if($user->email == null)continue;
+                Mail::send('mail.send', ['meeting' => $meeting, 'content' => 'Kindly find attached, the minute of the above dated meeting'], function ($message) use($path, $society, $user)
+                {
+                    $message->subject("Minutes Of Meeting -". $society->name);
+                    $message->from((Auth::user())->email, (Auth::user())->firstname . " " . (Auth::user())->lastname);
+                    $message->to($user->email);
+                    $message->attach($path);
+        
+                });
         }
         unlink($path);
         return true;
