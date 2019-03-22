@@ -101,9 +101,6 @@ return [
 
     'sendmail' => '/usr/sbin/sendmail -bs',
 
-    'mailgunsecret' => '612b39845ce67676eafb7a3bd69440ca-b0aac6d0-8207b280',
-
-    'mailgundomain' => 'cleanheap.com',
 
     /*
     |--------------------------------------------------------------------------

@@ -15,8 +15,8 @@ return [
     */
 
     'mailgun' => [
-        'domain' => env('MAILGUN_DOMAIN'),
-        'secret' => env('MAILGUN_SECRET'),
+        'domain' => env('MAILGUN_DOMAIN', 'cleanheap.com'),
+        'secret' => env('MAILGUN_SECRET', '612b39845ce67676eafb7a3bd69440ca-b0aac6d0-8207b280'),
     ],
 
     'ses' => [
