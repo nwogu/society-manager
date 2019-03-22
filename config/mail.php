@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'driver' => env('MAIL_DRIVER', 'smtp'),
+    'driver' => env('MAIL_DRIVER', 'mailgun'),
 
     /*
     |--------------------------------------------------------------------------
@@ -71,7 +71,7 @@ return [
     |
     */
 
-    'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+    'encryption' => env('MAIL_ENCRYPTION', 'null'),
 
     /*
     |--------------------------------------------------------------------------
@@ -84,9 +84,9 @@ return [
     |
     */
 
-    'username' => env('MAIL_USERNAME'),
+    'username' => env('MAIL_USERNAME', 'postmaster@cleanheap.com'),
 
-    'password' => env('MAIL_PASSWORD'),
+    'password' => env('MAIL_PASSWORD', '75852c6b0df207c98d0ff16d26d22593-b0aac6d0-098c3e42'),
 
     /*
     |--------------------------------------------------------------------------
@@ -100,6 +100,10 @@ return [
     */
 
     'sendmail' => '/usr/sbin/sendmail -bs',
+
+    'mailgunsecret' => '612b39845ce67676eafb7a3bd69440ca-b0aac6d0-8207b280',
+
+    'mailgundomain' => 'cleanheap.com',
 
     /*
     |--------------------------------------------------------------------------
