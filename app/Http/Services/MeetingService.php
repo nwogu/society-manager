@@ -605,7 +605,7 @@ class MeetingService
                 $message->attach($path);
     
             });}catch(\Exception $e){
-                \redirect()->back()->withErrors($e->message());
+                throw $e;
             }
         }
         unlink($path);
