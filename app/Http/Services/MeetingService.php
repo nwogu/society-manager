@@ -593,7 +593,7 @@ class MeetingService
         $pdfName = substr($society->name, 0, 3) . "_" . time() . "." . 'pdf';
         $path = storage_path() . "/". $pdfName;
         $pdf->save($path);
-        foreach($societ->users as $user)
+        foreach($society->users as $user)
         {
             if($user->email == null)continue;
             try{
