@@ -596,6 +596,7 @@ class MeetingService
         foreach($societ->users as $user)
         {
             if($user->email == null)continue;
+            try{
             Mail::send('mail.send', ['meeting' => $meeting, 'content' => 'Kindly find attached, the minute of the above dated meeting'], function ($message) use($path, $society, $user)
             {
                 $message->subject("Minutes Of Meeting -". $society->name);
@@ -603,7 +604,9 @@ class MeetingService
                 $message->to($user->email);
                 $message->attach($path);
     
-            });
+            });}catch(\Exception $e){
+                \redirect()->back()->withErrors($e->message());
+            }
         }
         unlink($path);
         return true;
