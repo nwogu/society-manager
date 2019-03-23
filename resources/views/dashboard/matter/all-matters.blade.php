@@ -154,7 +154,13 @@
 							</button>
 						</div>
 						<div class="modal-body">
-							<form action="{{ route('add-matter-to-meeting', ['matter' => $matter->id]) }}" method="POST">
+							<form action="
+                            @if(isset($matter))
+                            {{ route('add-matter-to-meeting', ['matter' => $matter->id]) }}
+                            @else
+                            #
+                            @endif
+                            " method="POST">
                                 @csrf
                                 <div class="form-group">
                                 <label for="message" class="form-control-label">Meetings</label>
