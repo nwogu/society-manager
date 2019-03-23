@@ -118,13 +118,7 @@
                             </div>
                         </div>
                             
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="copyright">
-                                    <p>Society Manager. Made by Gabriel: 08137507119</p>
-                                </div>
-                            </div>
-                        </div>
+                        @include('dashboard.footer')
                     </div>
                 </div>
 
