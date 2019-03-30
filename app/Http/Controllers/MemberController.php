@@ -218,7 +218,7 @@ class MemberController extends Controller
      * Remove Member
      * @return Response
      */
-    public function removeMember(User $user)
+    public function removeMember(User $user, Request $request)
     {
         //Remove member
         $this->userService->removeMember($this->society, $user);
