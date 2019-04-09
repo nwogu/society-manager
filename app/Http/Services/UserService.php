@@ -325,6 +325,7 @@ class UserService
     {
         if(Auth::user()->id == $member->id)return;
         $member->societies()->detach($society->id);
+        $member->refresh();
         return;
     }
 
