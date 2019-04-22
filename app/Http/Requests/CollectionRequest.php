@@ -14,7 +14,7 @@ class CollectionRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,39 +24,17 @@ class CollectionRequest extends FormRequest
      */
     public function rules()
     {
-        $collections = Constants::COLLECTION_TYPES;
+        $collections = function () {
+            return implode("," , Constants::COLLECTION_TYPES);
+        };
         //switch method
         switch($this->method())
         {
             case "POST":
                 return [
-                    "type" => "required|in_array:{$collections}",
+                    "type" => "required|in:{$collections()}",
                     "amount" => "required|numeric",
-                    "received" => "required|numeric",
-                    "description" => 'string',
-                    "balance" => 'numeric',
-                    "member" => "integer|exists:users,id",
-                    "collection_date" => "date",
-                    "recorder" => "integer|exists:user,id",
-                    "meeting_id" => "integer|exists:meetings,id",
-                    "commitee_id" => "integer|exists:commitees,id",
-                    "start_period" => "date",
-                    "end_period" => "date"
-
-                ];
-            case "PUT":
-                return [
-                    "amount" => "numeric",
-                    "received" => "numeric",
-                    "description" => 'string',
-                    "balance" => 'numeric',
-                    "member" => "integer|exists:users,id",
-                    "collection_date" => "date",
-                    "recorder" => "integer|exists:user,id",
-                    "meeting_id" => "integer|exists:meetings,id",
-                    "commitee_id" => "integer|exists:commitees,id",
-                    "start_period" => "date",
-                    "end_period" => "date"
+                    "received" => "required|numeric"
                 ];
         }
     }

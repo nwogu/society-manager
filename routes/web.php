@@ -87,12 +87,15 @@ Route::group(['middleware' => ['web', 'app_auth']], function()
     Route::group(['prefix' => 'finance'], function(){
         //Finance Routes
         Route::get('/dues', 'FinanceController@getCollectedDues')->name('get-collected-dues');
+        Route::get('/show-record-collection', 'FinanceController@showRecordCollection')->name('show-record-collection');
+        Route::get('show-edit-collection/{collection}', 'FinanceController@showEditCollection')->name('show-edit-collection');
+        Route::get('show-collection/{collection}', 'FinanceController@showCollection')->name('show-collection');
         Route::get('/levies', 'FinanceController@getCollectedLevies')->name('get-collected-levies');
         Route::get('/donations', 'FinanceController@getCollectedDonations')->name('get-collected-donations');
         Route::get('/expenses', 'FinanceController@getCollectedExpenses')->name('get-collected-expenses');
         Route::post('/record-collection', 'FinanceController@recordCollection')->name('record-collection');
-        Route::put('/edit-collection', 'FinanceController@editCollection')->name('edit-collection');
-        Route::delete('/delete-collection', 'FinanceController@deleteCollection')->name('delete-collection');
+        Route::post('/edit-collection/{collection}', 'FinanceController@editCollection')->name('edit-collection');
+        Route::get('/delete-collection/{collection}', 'FinanceController@deleteCollection')->name('delete-collection');
     });
 
 

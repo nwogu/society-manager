@@ -79,11 +79,15 @@ class FinanceService
      */
     public function recordCollection(Society $society, $data)
     {
-        //Add Society
-        $data['society_id'] =$society->id;
-        //Check recorder
-        $data['recorder'] = empty($data['recorder']) ?? Auth::user();
-        return Collection::create($data);
+        array_map( function ($member) use ($society, $data) {
+            $data['recorder'] = Auth::user()->id;
+            $data['member'] = $member;
+            $data['collection_date'] = empty($data['collection_date']) ? new \DateTime('now') : $data['collection_date'];
+            if (($balance = $data['amount'] - $data['received']) && $balance > 0) {
+                $data['balance'] = $balance;
+            }
+            $society->collections()->create($data);
+        }, $data['members']);
     }
 
     /**
@@ -101,7 +105,7 @@ class FinanceService
         //check collection
         if($collection == null) throw new \Exception("Collection not found for this society");
         //update collection
-        return $collection::update($data);
+        return $collection->update($data);
     }
 
     /**
@@ -119,6 +123,33 @@ class FinanceService
         if($collection == null) throw new \Exception("Collection not found for this society");
         //delete collection
         return $collection->delete();
+    }
+
+    /**
+     * Format a given amount
+     * @param int $amount The amount to be formated
+     * @param string $currencySymbol The Currency Symbol to use with the amount
+     * Defaults to Naira ₦
+     * 
+     * @return string $formatted
+     */
+    public static function formatAmount(int $amount, string $currencySymbol = "₦")
+    {
+        $formatted = "" . $amount;
+        for ($i = strlen($formatted); $i > 0; $i-= 3) {
+            $formatted = substr_replace($formatted, ",", $i, 0);
+        }
+        return rtrim ($currencySymbol . $formatted, ",");
+    }
+
+    /**
+     * Get Route Name for collection type
+     * @param string $type
+     * @return string $route
+     */
+    public function getCollectionRoute($type)
+    {
+        return "get-collected-{$type}";
     }
 
     

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Society;
 use App\Collection;
 use Illuminate\Http\Request;
 use App\Http\Services\FinanceService;
 use App\Http\Requests\CollectionRequest;
+use App\Constants;
 
 class FinanceController extends Controller
 {
@@ -19,12 +21,15 @@ class FinanceController extends Controller
      */
     protected $financeService;
 
-    public function __construct(Request $request, FinanceService $financeService)
+    public function __construct(FinanceService $financeService)
     {
-        //Resolve Society
-        $this->society = Society::find($request->session->get('society'));
+        $this->middleware(function ($request, $next){
+            //Resolve Society
+            $this->society = Society::find($request->session()->get("society"));
+            return $next($request);
+        });
         //Resolve Finance Service
-        $this->FinanceService = $financeService;
+        $this->financeService = $financeService;
     }
 
     /**
@@ -35,6 +40,7 @@ class FinanceController extends Controller
     {
         //Get Collected Dues
         $collectedDues = $this->financeService->getCollectedDues($this->society);
+        return view('dashboard.finance.all-dues', ['dues' => $collectedDues]);
     }
 
     /**
@@ -74,7 +80,40 @@ class FinanceController extends Controller
     public function recordCollection(CollectionRequest $request)
     {
         //Collection
-        $collection = $this->financeService->recordCollection($this->society, $request->validated());
+        $this->financeService->recordCollection($this->society, $request->all());
+        return redirect()->route($this->financeService->getCollectionRoute($request->collection_type))->with("message", "Collecton added successfully");
+    }
+
+    /**
+     * Show Record Collection
+     * @return Response
+     */
+    public function showRecordCollection(Request $request)
+    {
+        //Collection
+        return view('dashboard.finance.show-record-collection', 
+            [
+                "collectionTypes" => Constants::COLLECTION_TYPES, 
+                "society" => $this->society,
+                "type" => $request->collection_type
+            ]
+        );
+    }
+
+    /**
+     * Show Edit Collection
+     * @return Response
+     */
+    public function showEditCollection(Collection $collection)
+    {
+        //Collection
+        return view('dashboard.finance.show-edit-collection', 
+            [
+                "collectionTypes" => Constants::COLLECTION_TYPES, 
+                "society" => $this->society,
+                "collection" => $collection
+            ]
+        );
     }
 
     /**
@@ -84,9 +123,20 @@ class FinanceController extends Controller
     public function editCollection(Collection $collection, CollectionRequest $request)
     {
         //edited collection
-        $editedCollection = $this->financeService->editCollection($this->society, $collection, $request->validated());
+        $this->financeService->editCollection($this->society, $collection, $request->all());
+        //collection
+        return redirect()->route("show-collection", ['collection' => $collection->id])->with("message", "Updated Successfully");
     }
 
+    /**
+     * Show Collection
+     * @return Response
+     */
+    public function showCollection(Collection $collection)
+    {
+        $collection = $this->financeService->showCollection($this->society, $collection);
+        return view("dashboard.finance.show-collection", ["collection" => $collection]);
+    }
     /**
      * Remove Collection
      * @return Response

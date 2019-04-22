@@ -112,7 +112,7 @@
                                 <i class="fas fa-money-bill-alt"></i>Finance</a>
                             <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
                             <li>
-                                    <a href="#">Dues</a>
+                                    <a href="{{ route('get-collected-dues') }}">Dues</a>
                                 </li>
                                 <li>
                                     <a href="#">Levies</a>
@@ -209,7 +209,7 @@
                                 <i class="fas fa-money-bill-alt"></i>Finance</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a href="#">Dues</a>
+                                    <a href="{{ route('get-collected-dues') }}">Dues</a>
                                 </li>
                                 <li>
                                     <a href="#">Levies</a>
